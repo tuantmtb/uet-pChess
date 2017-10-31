@@ -8,6 +8,4 @@ import java.util.*
  */
 class ChessBoard {
     var pieces = arrayListOf<ChessPiece>()
-
-
 }
