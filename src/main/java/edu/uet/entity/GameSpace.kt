@@ -3,7 +3,8 @@ package edu.uet.entity
 /**
  * AI
  */
-class GameSpace {
-    // contain root
-    var root: GameSpaceNode? = null
+class GameSpace(root: GameSpaceNode) {
+    fun generateNodes(depth: Int) {
+
+    }
 }

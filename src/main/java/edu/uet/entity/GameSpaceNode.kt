@@ -1,12 +1,11 @@
 package edu.uet.entity
 
+import edu.uet.ChessConfig
+
 /**
  *
  */
-class GameSpaceNode {
-    // contain chessBoard
-    var chessBoard: ChessBoard? = null
-
+class GameSpaceNode(val chessBoard: ChessBoard) {
     var score: Int = 0
 
     // children
@@ -15,9 +14,13 @@ class GameSpaceNode {
     // parent
     var parent: GameSpaceNode? = null
 
-    fun calculate(): Int {
-        var score = 0
-        return score
+    /**
+     * Evaluating function based on current score and number of remaining pieces
+     */
+    fun evaluateForSide(currentSide: ChessSide, currentScore: Int, valueOfEachRemainingPiece: Int = ChessConfig.VALUE_OF_EACH_REMAINING_PIECE): Int {
+        val numberOfRemainPieceOfThisSide = chessBoard.pieces.filter { p -> p.chessSide == currentSide }.size
+
+        return currentScore + numberOfRemainPieceOfThisSide * valueOfEachRemainingPiece
     }
 
 }

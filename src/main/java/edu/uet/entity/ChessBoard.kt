@@ -1,11 +1,12 @@
 package edu.uet.entity
 
-import java.util.*
+import edu.uet.ChessConfig
 
 /**
  * Save status on board
  *
  */
-class ChessBoard {
-    var pieces = arrayListOf<ChessPiece>()
+class ChessBoard(val pieces: List<ChessPiece>) {
+
+    class Size(val width: Int = ChessConfig.BOARD_WIDTH, val height:Int = ChessConfig.BOARD_HEIGHT)
 }
