@@ -1,10 +1,38 @@
 package edu.uet.entity
 
+import edu.uet.ChessConfig
+
 /**
  * Created by tuantmtb on 10/31/17.
  */
-class ChessPiece(val position: Position, val chessSide: ChessSide) {
-    class Position(val x: Int = -1, val y: Int = -1)
+class ChessPiece(var position: Position, val chessSide: ChessSide) {
+    class Position(val x: Int = -1, val y: Int = -1) {
+        fun equals(other: Position): Boolean {
+            return other.x == x && other.y == y
+        }
+
+        /**
+         * == Black side == (White earns)
+         *       2 1
+         *
+         *
+         *
+         *       1 2
+         * == White side == (Black earns)
+         *
+         */
+        fun earnedPointsForSide(side: ChessSide, chessSize: ChessBoard.Size): Int {
+            return if (side == ChessSide.BLACK) {
+                if (x == chessSize.width / 2 - 1 && y == 0) ChessConfig.POINT_1
+                else if (x == chessSize.width / 2 && y == 0) ChessConfig.POINT_2
+                else 0
+            } else {
+                if (x == chessSize.width / 2 - 1 && y == chessSize.height - 1) ChessConfig.POINT_2
+                else if (x == chessSize.width / 2 && y == chessSize.height - 1) ChessConfig.POINT_1
+                else 0
+            }
+        }
+    }
 
     /**
      * Given if this piece is being blocked or not on 4 sides and based on current position and the chess board size, find all possible positions for the next move
@@ -59,6 +87,14 @@ class ChessPiece(val position: Position, val chessSide: ChessSide) {
         return ChessPiece(Position(x, y), chessSide)
     }
 
+    fun moveTo(position: Position) {
+        this.position = position
+    }
+
+    fun clone(): ChessPiece {
+        return ChessPiece(Position(position.x, position.y), chessSide)
+    }
+
     fun getPossibleBlockedPositions(boardSize: ChessBoard.Size): List<BlockedPosition> {
         return arrayListOf(
                 BlockedPosition(Position(position.x, position.y + 1), BlockedSide.TOP),
@@ -67,5 +103,9 @@ class ChessPiece(val position: Position, val chessSide: ChessSide) {
                 BlockedPosition(Position(position.x - 1, position.y), BlockedSide.LEFT)
         )
                 .filter({ p -> validatePosition(p.position, boardSize) })
+    }
+
+    fun equals(other: ChessPiece): Boolean {
+        return other.position.equals(position) && other.chessSide == chessSide
     }
 }

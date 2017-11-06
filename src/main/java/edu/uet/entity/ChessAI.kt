@@ -5,12 +5,12 @@ class ChessAI {
     var gameSpaceDeep = 3
     val currentGameSpace: GameSpace? = null
 
-    fun getNextMoveForChessBoard(chessBoard: ChessBoard) {
-
-        // create game space
-        val gameSpaceRoot = GameSpaceNode(chessBoard)
-        val currentGameSpace = GameSpace(gameSpaceRoot)
-
-
-    }
+//    fun getNextMoveForChessBoard(chessBoard: ChessBoard) {
+//
+//        // create game space
+//        val gameSpaceRoot = GameSpaceNode(chessBoard)
+//        val currentGameSpace = GameSpace(gameSpaceRoot)
+//
+//
+//    }
 }

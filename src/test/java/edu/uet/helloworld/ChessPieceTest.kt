@@ -6,6 +6,7 @@ import edu.uet.entity.ChessSide
 import edu.uet.entity.ChessBoard.Size
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ChessPieceTest {
 
@@ -55,5 +56,13 @@ class ChessPieceTest {
         val generatedBlockPositions = piece.getPossibleBlockedPositions(ChessBoard.Size(6, 6))
 
         assertEquals(2, generatedBlockPositions.size)
+    }
+
+    @Test
+    fun equalsOther() {
+        val piece = ChessPiece(ChessPiece.Position(5, 5), ChessSide.BLACK)
+        val other = ChessPiece(ChessPiece.Position(5, 5), ChessSide.BLACK)
+
+        assertTrue { piece.equals(other) }
     }
 }

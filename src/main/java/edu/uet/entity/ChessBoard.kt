@@ -6,15 +6,14 @@ import edu.uet.ChessConfig
  * Save status on board
  *
  */
-class ChessBoard(val pieces: List<ChessPiece>, val size: Size = Size(ChessConfig.BOARD_WIDTH, ChessConfig.BOARD_HEIGHT)) {
+class ChessBoard(var pieces: ArrayList<ChessPiece>, val size: Size = Size(ChessConfig.BOARD_WIDTH, ChessConfig.BOARD_HEIGHT)) {
 
-    class Size(val width: Int = ChessConfig.BOARD_WIDTH, val height:Int = ChessConfig.BOARD_HEIGHT)
+    class Size(val width: Int = ChessConfig.BOARD_WIDTH, val height: Int = ChessConfig.BOARD_HEIGHT)
 
     fun getBlockedPositionForPiece(piece: ChessPiece) = piece.getPossibleBlockedPositions(size)
             .filter { bp ->
                 val matchedPiece = pieces.find { piece ->
-                    piece.position.x == bp.position.x
-                            && piece.position.y == bp.position.y
+                    piece.position.equals(bp.position)
                 }
 
                 matchedPiece != null
@@ -47,5 +46,82 @@ class ChessBoard(val pieces: List<ChessPiece>, val size: Size = Size(ChessConfig
         })
 
         return piece.getPossibleNextPositions(topBlocked, rightBlocked, bottomBlocked, leftBlocked, size)
+                .filter { position ->
+                    // Exclude positions that allies are standing on
+
+                    var result = true
+
+                    getPieceAtPosition(position)?.let { found ->
+                        if(found.chessSide == piece.chessSide) {
+                            result = false
+                        }
+                    }
+
+                    result
+                }
     }
+
+    fun move(piece: ChessPiece, position: ChessPiece.Position,
+             onPieceDies: ((ChessPiece) -> Any)?,
+             onPointsGivenForSide: ((ChessSide, Int) -> Any)?,
+             onPieceMoves: ((ChessPiece) -> Any)?) {
+
+
+        // Check if position is valid
+        val possibleNextPositions = getPossibleNextPositionForPiece(piece)
+        possibleNextPositions.find({ p -> p.equals(position) }) ?: return
+
+        getPieceAtPosition(position)?.let { eatenPiece ->
+            onPieceDies?.invoke(eatenPiece)
+            onPointsGivenForSide?.invoke(piece.chessSide, ChessConfig.POINTS_FOR_EATING_AN_PIECE)
+            pieces.remove(eatenPiece)
+        }
+
+        piece.moveTo(position)
+        onPieceMoves?.invoke(piece)
+
+        val point = position.earnedPointsForSide(piece.chessSide, size)
+
+        // Reach a point position and teleport to corner
+        if (point != 0) {
+            onPointsGivenForSide?.invoke(piece.chessSide, point)
+
+            val newPosition = getNewPositionWhenPieceIsTeleported(piece, point)
+
+            getPieceAtPosition(newPosition)?.let { pieceAtNewPosition ->
+                onPieceDies?.invoke(pieceAtNewPosition)
+
+                if (pieceAtNewPosition.chessSide !== piece.chessSide) {
+                    onPointsGivenForSide?.invoke(piece.chessSide, ChessConfig.POINTS_FOR_EATING_AN_PIECE)
+                } // else an ally has been eaten
+
+                pieces.remove(pieceAtNewPosition)
+            }
+
+            piece.moveTo(newPosition)
+            onPieceMoves?.invoke(piece)
+        }
+
+    }
+
+
+    fun clone(): ChessBoard {
+        val newPieces = ArrayList(pieces.map { p -> p.clone() })
+        return ChessBoard(newPieces, Size(size.width, size.height))
+    }
+
+    private fun getPieceAtPosition(position: ChessPiece.Position): ChessPiece? {
+        return pieces.find({ piece -> piece.position.equals(position) })
+    }
+
+    private fun getNewPositionWhenPieceIsTeleported(piece: ChessPiece, point: Int): ChessPiece.Position {
+        return if (piece.chessSide == ChessSide.WHITE) {
+            if (point == ChessConfig.POINT_1) ChessPiece.Position(size.width - 1, 0)
+            else ChessPiece.Position(0, 0)
+        } else {
+            if (point == ChessConfig.POINT_1) ChessPiece.Position(0, size.height - 1)
+            else ChessPiece.Position(size.width - 1, size.height - 1)
+        }
+    }
+
 }
