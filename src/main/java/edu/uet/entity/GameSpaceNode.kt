@@ -23,4 +23,9 @@ class GameSpaceNode(val chessBoard: ChessBoard) {
         return currentScore + numberOfRemainPieceOfThisSide * valueOfEachRemainingPiece
     }
 
+  /*  fun generatePossibilities() {
+        chessBoard.pieces.forEach({piece ->
+            val nextPosiblePositions = piece.getPossibleNextPositions()
+        })
+    }*/
 }
