@@ -4,7 +4,7 @@ import edu.uet.GameMaster
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessPiece.Position
 import edu.uet.entity.ChessSide
-import javafx.beans.property.SimpleStringProperty
+import javafx.scene.Cursor
 import javafx.scene.control.Label
 import javafx.scene.control.SplitPane
 import javafx.scene.effect.BlurType
@@ -44,13 +44,18 @@ class GameScreen: View() {
                 imageView.fitWidthProperty().set(100.0)
                 imageView.mouseTransparentProperty().set(true)
                 pane.children.add(imageView)
+
+                // Hình bàn tay khi di chuyển lên quân cờ
+                if (piece.chessSide == game.turn) {
+                    pane.cursorProperty().set(Cursor.HAND)
+                }
             }
         }
         onTurnSwitched()
     }
 
-    private fun findPaneOf(piece: ChessPiece) : Pane? {
-        return boardUI.getChildList()?.firstOrNull { piece.position.equals(it.userData as Position) } as? Pane?
+    private fun findPaneOf(piece: ChessPiece) : Pane {
+        return boardUI.getChildList()?.first { piece.position.equals(it.userData as Position) } as Pane
     }
 
     fun positionOnMouseClicked(event: MouseEvent) {
@@ -75,12 +80,13 @@ class GameScreen: View() {
                     game.board.move(
                             currentPiece, targetPosition,
                             {piece ->
-                                findPaneOf(piece).let { pane -> removePiece(pane!!) } as Any
+                                val pane = findPaneOf(piece)
+                                removePiece(pane)
                             },
                             null,
                             {piece ->
                                 val newPane = findPaneOf(piece)
-                                if (prevPane != null && newPane != null) {
+                                if (prevPane != null) {
                                     movePiece(prevPane!!, newPane)
                                     prevPane = newPane
                                 }
@@ -96,12 +102,14 @@ class GameScreen: View() {
 
     private fun movePiece(from: Pane, to: Pane) {
         removePiece(from).let { image -> to.children.add(image)}
+        to.cursorProperty().set(Cursor.HAND)
     }
 
-    private fun removePiece(pane: Pane) : ImageView? {
-        val image = pane.children?.firstOrNull()
-        pane.children?.clear()
-        return image as? ImageView
+    private fun removePiece(pane: Pane) : ImageView {
+        val image = pane.children.first()
+        pane.children.clear()
+        pane.cursorProperty().set(Cursor.DEFAULT)
+        return image as ImageView
     }
 
     private fun onTurnSwitched() {
@@ -111,6 +119,14 @@ class GameScreen: View() {
         } else {
             pBlackName.textFillProperty().set(Paint.valueOf("black"))
             pWhiteName.textFillProperty().set(Paint.valueOf("red"))
+        }
+        game.board.pieces.forEach {
+            val pane = findPaneOf(it)
+            if (it.chessSide == game.turn) {
+                pane.cursorProperty().set(Cursor.HAND)
+            } else {
+                pane.cursorProperty().set(Cursor.DEFAULT)
+            }
         }
     }
 

@@ -74,8 +74,8 @@
         </GridPane>
         <Pane prefHeight="200.0" prefWidth="200.0">
             <children>
-                <Label fx:id="pBlackName" layoutX="81.0" layoutY="32.0" mouseTransparent="true" text="Player 1" />
-                <Label fx:id="pWhiteName" layoutX="81.0" layoutY="499.0" mouseTransparent="true" text="Player 2" />
+                <Label fx:id="pBlackName" layoutX="81.0" layoutY="32.0" mouseTransparent="true" text="Player 2" />
+                <Label fx:id="pWhiteName" layoutX="81.0" layoutY="499.0" mouseTransparent="true" text="Player 1" />
                 <Label layoutX="96.0" layoutY="56.0" mouseTransparent="true" text="0">
                     <font>
                         <Font size="24.0" />
