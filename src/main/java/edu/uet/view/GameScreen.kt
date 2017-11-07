@@ -1,8 +1,11 @@
 package edu.uet.view
 
 import edu.uet.GameMaster
+import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessPiece.Position
 import edu.uet.entity.ChessSide
+import javafx.beans.property.SimpleStringProperty
+import javafx.scene.control.Label
 import javafx.scene.control.SplitPane
 import javafx.scene.effect.BlurType
 import javafx.scene.effect.InnerShadow
@@ -13,6 +16,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import tornadofx.*
 
 class GameScreen: View() {
@@ -20,13 +24,15 @@ class GameScreen: View() {
     private val boardUI: GridPane by fxid("board")
     private var selectedPane: Pane? = null
     private var game: GameMaster = GameMaster()
+    private val pBlackName: Label by fxid("pBlackName")
+    private val pWhiteName: Label by fxid("pWhiteName")
 
     init {
         titleProperty.set("Cờ điểm UET")
 
         boardUI.getChildList()?.forEach {
             // set position cho các ô
-            val pos = Position(GridPane.getRowIndex(it), GridPane.getColumnIndex(it))
+            val pos = Position(game.board.size.width - 1 - GridPane.getColumnIndex(it), game.board.size.height - 1 - GridPane.getRowIndex(it))
             it.userData = pos
 
             // Đặt các quân cờ vào các ô
@@ -40,6 +46,11 @@ class GameScreen: View() {
                 pane.children.add(imageView)
             }
         }
+        onTurnSwitched()
+    }
+
+    private fun findPaneOf(piece: ChessPiece) : Pane? {
+        return boardUI.getChildList()?.firstOrNull { piece.position.equals(it.userData as Position) } as? Pane?
     }
 
     fun positionOnMouseClicked(event: MouseEvent) {
@@ -60,26 +71,47 @@ class GameScreen: View() {
                 val possibleNextPositions = game.board.getPossibleNextPositionForPiece(currentPiece)
                 // Nếu là 1 nước đi hợp lệ
                 if (possibleNextPositions.any { targetPosition.equals(it) }) {
+                    var prevPane = selectedPane
                     game.board.move(
                             currentPiece, targetPosition,
-                            {
-                                targetPane.children.clear()
+                            {piece ->
+                                findPaneOf(piece).let { pane -> removePiece(pane!!) } as Any
                             },
                             null,
-                            {
-                                movePiece(selectedPane, targetPane)
-                                deselect()
+                            {piece ->
+                                val newPane = findPaneOf(piece)
+                                if (prevPane != null && newPane != null) {
+                                    movePiece(prevPane!!, newPane)
+                                    prevPane = newPane
+                                }
                             }
                     )
+                    deselect()
+                    game.nextTurn()
+                    onTurnSwitched()
                 }
             }
         }
     }
 
-    private fun movePiece(from: Pane?, to: Pane) {
-        val imageView = from?.children?.first()
-        from?.children?.clear()
-        to.children.add(imageView)
+    private fun movePiece(from: Pane, to: Pane) {
+        removePiece(from).let { image -> to.children.add(image)}
+    }
+
+    private fun removePiece(pane: Pane) : ImageView? {
+        val image = pane.children?.firstOrNull()
+        pane.children?.clear()
+        return image as? ImageView
+    }
+
+    private fun onTurnSwitched() {
+        if (game.turn == ChessSide.BLACK) {
+            pBlackName.textFillProperty().set(Paint.valueOf("red"))
+            pWhiteName.textFillProperty().set(Paint.valueOf("black"))
+        } else {
+            pBlackName.textFillProperty().set(Paint.valueOf("black"))
+            pWhiteName.textFillProperty().set(Paint.valueOf("red"))
+        }
     }
 
     fun boardOnKeyReleased(event: KeyEvent) {

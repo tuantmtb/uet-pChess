@@ -13,18 +13,18 @@ class GameMaster {
 
     init {
         board = ChessBoard(arrayListOf(
-                ChessPiece(ChessPiece.Position(0, 0), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(0, 1), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(0, 2), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(0, 3), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(0, 4), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(0, 5), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(5, 0), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(5, 1), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(5, 2), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(5, 3), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(5, 4), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(5, 5), ChessSide.WHITE)
+                ChessPiece(ChessPiece.Position( 0, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position( 1, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position( 2, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position( 3, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position( 4, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position( 5, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position( 0, 5), ChessSide.BLACK),
+                ChessPiece(ChessPiece.Position( 1, 5), ChessSide.BLACK),
+                ChessPiece(ChessPiece.Position( 2, 5), ChessSide.BLACK),
+                ChessPiece(ChessPiece.Position( 3, 5), ChessSide.BLACK),
+                ChessPiece(ChessPiece.Position( 4, 5), ChessSide.BLACK),
+                ChessPiece(ChessPiece.Position( 5, 5), ChessSide.BLACK)
         ), ChessBoard.Size(6, 6))
     }
 
