@@ -12,10 +12,7 @@ class ChessBoard(var pieces: ArrayList<ChessPiece>, val size: Size = Size(ChessC
 
     fun getBlockedPositionForPiece(piece: ChessPiece) = piece.getPossibleBlockedPositions(size)
             .filter { bp ->
-                val matchedPiece = pieces.find { piece ->
-                    piece.position.equals(bp.position)
-                }
-
+                val matchedPiece = getPieceAtPosition(bp.position)
                 matchedPiece != null
             }
 

@@ -29,10 +29,37 @@ class GameSpaceNode(val chessBoard: ChessBoard, val blackSideGameScore: Int, val
         return currentScore + numberOfRemainPieceOfThisSide * valueOfEachRemainingPiece
     }
 
-    fun generateNextPossibilities() {
-        chessBoard.pieces.forEach({piece ->
-            val nextPosiblePositions = chessBoard.getPossibleNextPositionForPiece(piece)
+    fun generateChildren() {
 
-        })
+        children.clear()
+
+        chessBoard.pieces
+                .filter { p -> p.chessSide == currentSide }
+                .forEach({ piece ->
+                    val nextPossiblePositions = chessBoard.getPossibleNextPositionForPiece(piece)
+
+                    nextPossiblePositions.forEach({ position ->
+                        val newBoard = chessBoard.clone()
+
+                        var newBlackSideGameScore = blackSideGameScore
+                        var newWhiteSideGameScore = whiteSideGameScore
+
+                        newBoard.pieces.find { p -> p.equals(piece) }?.let { pieceToMove ->
+                            chessBoard.move(pieceToMove, position, onPieceMoves = null, onPieceDies = null, onPointsGivenForSide = { side, points ->
+                                if (side == ChessSide.BLACK) {
+                                    newBlackSideGameScore += points
+                                } else {
+                                    newWhiteSideGameScore += points
+                                }
+                            })
+
+                            val newSide = if (currentSide == ChessSide.BLACK) ChessSide.WHITE else ChessSide.BLACK
+                            val newNode = GameSpaceNode(newBoard, newBlackSideGameScore, newWhiteSideGameScore, newSide)
+
+                            newNode.parent = this
+                            children.add(newNode)
+                        }
+                    })
+                })
     }
 }
