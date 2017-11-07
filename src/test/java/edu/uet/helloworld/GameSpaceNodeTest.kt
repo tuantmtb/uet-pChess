@@ -19,7 +19,7 @@ class GameSpaceNodeTest {
 
         val gameSpaceNode = GameSpaceNode(ChessBoard(pieces), 10, 12, ChessSide.BLACK)
 
-        val evaluatedValue = gameSpaceNode.evaluateForSide(2)
+        val evaluatedValue = gameSpaceNode.evaluate(2)
 
         assertEquals(16, evaluatedValue)
     }

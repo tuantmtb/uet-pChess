@@ -148,7 +148,7 @@ class ChessBoardTest {
     }
 
     @Test
-    fun moveAPieceAndEatAnEnemyAtPointPositionAnThenEatAnEnemy() {
+    fun moveAPieceAndEatAnEnemyAtPointPositionAnThenEatAnotherEnemy() {
         val piece1 = ChessPiece(ChessPiece.Position(2, 3), ChessSide.WHITE)
         val piece2 = ChessPiece(ChessPiece.Position(3, 5), ChessSide.BLACK)
         val piece3 = ChessPiece(ChessPiece.Position(5, 0), ChessSide.BLACK)

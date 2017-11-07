@@ -17,7 +17,7 @@ class GameSpaceNode(val chessBoard: ChessBoard, val blackSideGameScore: Int, val
     /**
      * Evaluating function based on current score and number of remaining pieces
      */
-    fun evaluateForSide(valueOfEachRemainingPiece: Int = ChessConfig.VALUE_OF_EACH_REMAINING_PIECE): Int {
+    fun evaluate(valueOfEachRemainingPiece: Int = ChessConfig.VALUE_OF_EACH_REMAINING_PIECE): Int {
         val currentScore = if (currentSide == ChessSide.BLACK) {
             blackSideGameScore
         } else {
