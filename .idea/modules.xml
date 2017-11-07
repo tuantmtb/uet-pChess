@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/uet-pChess.iml" filepath="$PROJECT_DIR$/.idea/modules/uet-pChess.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/uet-pChess_main.iml" filepath="$PROJECT_DIR$/.idea/modules/uet-pChess_main.iml" group="uet-pChess" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/uet-pChess_test.iml" filepath="$PROJECT_DIR$/.idea/modules/uet-pChess_test.iml" group="uet-pChess" />
+    </modules>
+  </component>
+</project>
