@@ -110,7 +110,7 @@ class ChessBoard(var pieces: ArrayList<ChessPiece>, val size: Size = Size(ChessC
         return ChessBoard(newPieces, Size(size.width, size.height))
     }
 
-    private fun getPieceAtPosition(position: ChessPiece.Position): ChessPiece? {
+    fun getPieceAtPosition(position: ChessPiece.Position): ChessPiece? {
         return pieces.find({ piece -> piece.position.equals(position) })
     }
 
