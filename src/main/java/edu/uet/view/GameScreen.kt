@@ -8,6 +8,7 @@ import javafx.scene.Cursor
 import javafx.scene.control.Label
 import javafx.scene.control.SplitPane
 import javafx.scene.effect.BlurType
+import javafx.scene.effect.Effect
 import javafx.scene.effect.InnerShadow
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
@@ -23,6 +24,7 @@ class GameScreen: View() {
     override val root: SplitPane by fxml("/GameScreen.fxml")
     private val boardUI: GridPane by fxid("board")
     private var selectedPane: Pane? = null
+    private var posiblePositionPanes = arrayListOf<Pane>()
     private var game: GameMaster = GameMaster()
     private val pBlackName: Label by fxid("pBlackName")
     private val pWhiteName: Label by fxid("pWhiteName")
@@ -54,8 +56,12 @@ class GameScreen: View() {
         onTurnSwitched()
     }
 
-    private fun findPaneOf(piece: ChessPiece) : Pane {
-        return boardUI.getChildList()?.first { piece.position.equals(it.userData as Position) } as Pane
+    private fun findPaneOfPiece(piece: ChessPiece) : Pane {
+        return findPaneOfPosition(piece.position)
+    }
+
+    private fun findPaneOfPosition(position: Position) : Pane {
+        return boardUI.getChildList()?.first { position.equals(it.userData as Position) } as Pane
     }
 
     fun positionOnMouseClicked(event: MouseEvent) {
@@ -80,12 +86,12 @@ class GameScreen: View() {
                     game.board.move(
                             currentPiece, targetPosition,
                             {piece ->
-                                val pane = findPaneOf(piece)
+                                val pane = findPaneOfPiece(piece)
                                 removePiece(pane)
                             },
                             null,
                             {piece ->
-                                val newPane = findPaneOf(piece)
+                                val newPane = findPaneOfPiece(piece)
                                 if (prevPane != null) {
                                     movePiece(prevPane!!, newPane)
                                     prevPane = newPane
@@ -121,7 +127,7 @@ class GameScreen: View() {
             pWhiteName.textFillProperty().set(Paint.valueOf("red"))
         }
         game.board.pieces.forEach {
-            val pane = findPaneOf(it)
+            val pane = findPaneOfPiece(it)
             if (it.chessSide == game.turn) {
                 pane.cursorProperty().set(Cursor.HAND)
             } else {
@@ -139,16 +145,52 @@ class GameScreen: View() {
     private fun deselect() {
         selectedPane?.effectProperty()?.set(null)
         selectedPane = null
+        deHighlightPossibleNextPositions()
     }
 
     private fun select(pane: Pane) {
+        val effect = selectedEffect()
+        selectedPane = pane
+        selectedPane!!.effectProperty().set(effect)
+        highlightPossibleNextPositions()
+    }
+
+    private fun highlightPossibleNextPositions() {
+        val position = selectedPane!!.userData as Position
+        game.board.getPieceAtPosition(position).let { piece ->
+            val positions = game.board.getPossibleNextPositionForPiece(piece!!)
+            posiblePositionPanes = positions.map { findPaneOfPosition(it) } as ArrayList<Pane>
+            posiblePositionPanes.forEach {
+                val effect = possibleEffect()
+                it.effectProperty().set(effect)
+            }
+        }
+    }
+
+    private fun deHighlightPossibleNextPositions() {
+        posiblePositionPanes.forEach {
+            it.effectProperty().set(null)
+        }
+        posiblePositionPanes.clear()
+    }
+
+    private fun selectedEffect() : Effect {
         val effect = InnerShadow()
         effect.blurTypeProperty().set(BlurType.ONE_PASS_BOX)
         effect.chokeProperty().set(10.0)
         effect.widthProperty().set(30.0)
         effect.heightProperty().set(30.0)
         effect.colorProperty().set(Color.valueOf("#e65100"))
-        selectedPane = pane
-        selectedPane?.effectProperty()?.set(effect)
+        return effect
+    }
+
+    private fun possibleEffect() : Effect {
+        val effect = InnerShadow()
+        effect.blurTypeProperty().set(BlurType.ONE_PASS_BOX)
+        effect.chokeProperty().set(10.0)
+        effect.widthProperty().set(30.0)
+        effect.heightProperty().set(30.0)
+        effect.colorProperty().set(Color.valueOf("GREEN"))
+        return effect
     }
 }
