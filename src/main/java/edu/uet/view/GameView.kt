@@ -43,8 +43,8 @@ class GameView : BaseView() {
         game.board.pieces.forEach {
             // Đặt các quân cờ vào các ô
             val imageView = ImageView(if (it.chessSide == ChessSide.BLACK) "knight_black.png" else "knight_white.png")
-            imageView.fitHeightProperty().set(100.0)
-            imageView.fitWidthProperty().set(100.0)
+            imageView.fitHeight = 100.0
+            imageView.fitWidth = 100.0
             imageView.userData = it
             imageView.setOnDragDetected { onChessPieceDragDetected(it) }
             val pane = posMap[it.position.toString()]
@@ -57,10 +57,10 @@ class GameView : BaseView() {
 
     private fun bind() {
         game.addPropertyChangeListener("WHITE_POINT_CHANGED", {
-            whitePoint.textProperty().set(it.newValue.toString())
+            whitePoint.text = it.newValue.toString()
         })
         game.addPropertyChangeListener("BLACK_POINT_CHANGED", {
-            blackPoint.textProperty().set(it.newValue.toString())
+            blackPoint.text = it.newValue.toString()
         })
         game.addPropertyChangeListener("TURN_SWITCHED", { updateTurn() })
         game.addPropertyChangeListener("PIECE_DIED", {
@@ -79,7 +79,7 @@ class GameView : BaseView() {
         })
         game.addPropertyChangeListener("WINNER", {
             pieceMap.values.forEach {
-                it.cursorProperty().set(Cursor.DEFAULT)
+                it.cursor = Cursor.DEFAULT
             }
         })
     }
@@ -126,17 +126,17 @@ class GameView : BaseView() {
 
     private fun updateTurn() {
         if (game.isTurnOf(ChessSide.BLACK)) {
-            blackName.textFillProperty().set(Paint.valueOf("red"))
-            whiteName.textFillProperty().set(Paint.valueOf("black"))
+            blackName.textFill = Paint.valueOf("red")
+            whiteName.textFill = Paint.valueOf("black")
         } else {
-            blackName.textFillProperty().set(Paint.valueOf("black"))
-            whiteName.textFillProperty().set(Paint.valueOf("red"))
+            blackName.textFill = Paint.valueOf("black")
+            whiteName.textFill = Paint.valueOf("red")
         }
         pieceMap.forEach { piece, imgView ->
             if (game.isTurnOf(piece.chessSide)) {
-                imgView.cursorProperty().set(Cursor.OPEN_HAND)
+                imgView.cursor = Cursor.OPEN_HAND
             } else {
-                imgView.cursorProperty().set(Cursor.DEFAULT)
+                imgView.cursor = Cursor.DEFAULT
             }
         }
     }
@@ -144,23 +144,23 @@ class GameView : BaseView() {
     private fun highlightPossibleNextPositions() {
         possibleNextPos.map { posMap[it.toString()] }.forEach {
             val effect = possibleEffect()
-            it!!.effectProperty().set(effect)
+            it!!.effect = effect
         }
     }
 
     private fun deHighlightPossibleNextPositions() {
         possibleNextPos.map { posMap[it.toString()] }.forEach {
-            it!!.effectProperty().set(null)
+            it!!.effect = null
         }
     }
 
     private fun possibleEffect() : Effect {
         val effect = InnerShadow()
-        effect.blurTypeProperty().set(BlurType.ONE_PASS_BOX)
-        effect.chokeProperty().set(10.0)
-        effect.widthProperty().set(30.0)
-        effect.heightProperty().set(30.0)
-        effect.colorProperty().set(Color.valueOf("GREEN"))
+        effect.blurType = BlurType.ONE_PASS_BOX
+        effect.choke = 10.0
+        effect.width = 30.0
+        effect.height = 30.0
+        effect.color = Color.valueOf("GREEN")
         return effect
     }
 }
