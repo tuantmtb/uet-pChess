@@ -103,7 +103,7 @@ class GameMaster {
        return side == turn
     }
 
-    private fun isValidMove(piece: ChessPiece, position: ChessPiece.Position) : Boolean {
+    fun isValidMove(piece: ChessPiece, position: ChessPiece.Position) : Boolean {
         val possibleNextPositions = board.getPossibleNextPositionForPiece(piece)
         return possibleNextPositions.any { position.equals(it) }
     }

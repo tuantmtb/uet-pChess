@@ -18,7 +18,7 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 
 class GameView : BaseView() {
-    override val root: SplitPane by fxml("/GameScreen.fxml")
+    override val root: SplitPane by fxml("/Game.fxml")
     private val boardUI: GridPane by fxid("board")
     private var game = GameMaster()
     private val blackName: Label by fxid("blackName")
@@ -29,6 +29,7 @@ class GameView : BaseView() {
     private val pieceMap =  HashMap<ChessPiece, ImageView>()
     private val posMap = HashMap<String, Pane>()
     private val possibleNextPos = arrayListOf<Position>()
+    private var draggingPiece: ChessPiece? = null
 
     init {
         boardUI.children.forEach {
@@ -88,26 +89,35 @@ class GameView : BaseView() {
         val imgView = event.target as ImageView
         val piece = imgView.userData as ChessPiece
         if (!game.hasWinner() && game.isTurnOf(piece.chessSide)) {
+            // put image to drag board
             val db = imgView.startDragAndDrop(TransferMode.MOVE)
             val content = ClipboardContent()
             content.putImage(imgView.image)
             db.setContent(content)
-            event.consume()
+            draggingPiece = piece
+
+            // highlight possible positions
             possibleNextPos.addAll(game.board.getPossibleNextPositionForPiece(piece))
             highlightPossibleNextPositions()
+
+            event.consume()
         }
     }
 
     private fun onPositionDragOver(event: DragEvent) {
         nextPane = event.source as Pane
+        if (game.isValidMove(draggingPiece!!, nextPane!!.userData as Position)) {
+            event.acceptTransferModes(TransferMode.MOVE)
+        } else {
+            event.acceptTransferModes(null)
+        }
     }
 
     private fun onChessPieceDragDone(event: DragEvent) {
-        val imgView = event.target as ImageView
-        val curPiece = imgView.userData as ChessPiece
         val nextPos = nextPane!!.userData as Position
-        game.move(curPiece, nextPos)
+        game.move(draggingPiece!!, nextPos)
         nextPane = null
+        draggingPiece = null
         deHighlightPossibleNextPositions()
         possibleNextPos.clear()
     }
