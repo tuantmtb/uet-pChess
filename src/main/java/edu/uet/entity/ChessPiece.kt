@@ -36,6 +36,13 @@ class ChessPiece(var position: Position, val chessSide: ChessSide) {
         override fun toString(): String {
             return "($x;$y)"
         }
+
+        companion object {
+            fun parse(str: String): Position {
+                val pos = str.substringAfter("(").substringBefore(")").split(";").map { Integer.parseInt(it) }
+                return Position(pos[0], pos[1])
+            }
+        }
     }
 
     /**

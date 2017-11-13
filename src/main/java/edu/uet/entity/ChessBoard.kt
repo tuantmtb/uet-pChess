@@ -59,9 +59,9 @@ class ChessBoard(var pieces: ArrayList<ChessPiece>, val size: Size = Size(ChessC
     }
 
     fun move(piece: ChessPiece, position: ChessPiece.Position,
-             onPieceDies: ((ChessPiece) -> Any)?,
-             onPointsGivenForSide: ((ChessSide, Int) -> Any)?,
-             onPieceMoves: ((ChessPiece) -> Any)?) {
+             onPieceDies: ((ChessPiece) -> Unit)?,
+             onPointsGivenForSide: ((ChessSide, Int) -> Unit)?,
+             onPieceMoves: ((ChessPiece) -> Unit)?) {
 
 
         // Check if position is valid
@@ -84,21 +84,21 @@ class ChessBoard(var pieces: ArrayList<ChessPiece>, val size: Size = Size(ChessC
             onPointsGivenForSide?.invoke(piece.chessSide, point)
 
             val newPosition = getNewPositionWhenPieceIsTeleported(piece, point)
+            val pieceAtNewPosition = getPieceAtPosition(newPosition)
 
-            getPieceAtPosition(newPosition)?.let { pieceAtNewPosition ->
+            if (pieceAtNewPosition == null) {
+                // Teleport
+                piece.moveTo(newPosition)
+                onPieceMoves?.invoke(piece)
+            } else if (pieceAtNewPosition.chessSide != piece.chessSide) {
+                // Eat an enemy
                 onPieceDies?.invoke(pieceAtNewPosition)
-
-                if (pieceAtNewPosition.chessSide !== piece.chessSide) {
-                    onPointsGivenForSide?.invoke(piece.chessSide, ChessConfig.POINTS_FOR_EATING_AN_PIECE)
-                } // else an ally has been eaten
-
+                onPointsGivenForSide?.invoke(piece.chessSide, ChessConfig.POINTS_FOR_EATING_AN_PIECE)
                 pieces.remove(pieceAtNewPosition)
+                piece.moveTo(newPosition)
+                onPieceMoves?.invoke(piece)
             }
-
-            piece.moveTo(newPosition)
-            onPieceMoves?.invoke(piece)
         }
-
     }
 
 
