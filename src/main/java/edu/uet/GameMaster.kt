@@ -24,7 +24,7 @@ class GameMaster {
             ChessPiece(ChessPiece.Position( 4, 5), ChessSide.BLACK),
             ChessPiece(ChessPiece.Position( 5, 5), ChessSide.BLACK)
     ), ChessBoard.Size(6, 6))
-    var turn : ChessSide = ChessSide.WHITE
+    private var turn : ChessSide = ChessSide.WHITE
     private val points = hashMapOf(
             Pair(ChessSide.BLACK, 0),
             Pair(ChessSide.WHITE, 0)
@@ -42,7 +42,7 @@ class GameMaster {
         propChangeSupport.firePropertyChange("TURN_SWITCHED", oldValue, turn)
     }
 
-    fun winner() : ChessSide? {
+    private fun winner() : ChessSide? {
         if (points[ChessSide.BLACK]!! >= pointThreshold) {
             return ChessSide.BLACK
         }
@@ -103,7 +103,7 @@ class GameMaster {
        return side == turn
     }
 
-    fun isValidMove(piece: ChessPiece, position: ChessPiece.Position) : Boolean {
+    private fun isValidMove(piece: ChessPiece, position: ChessPiece.Position) : Boolean {
         val possibleNextPositions = board.getPossibleNextPositionForPiece(piece)
         return possibleNextPositions.any { position.equals(it) }
     }

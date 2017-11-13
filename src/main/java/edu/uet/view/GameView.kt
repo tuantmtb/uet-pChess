@@ -16,9 +16,8 @@ import javafx.scene.layout.GridPane
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
-import tornadofx.*
 
-class GameScreen: View() {
+class GameView : BaseView() {
     override val root: SplitPane by fxml("/GameScreen.fxml")
     private val boardUI: GridPane by fxid("board")
     private var game = GameMaster()
@@ -32,8 +31,6 @@ class GameScreen: View() {
     private val possibleNextPos = arrayListOf<Position>()
 
     init {
-        titleProperty.set("Cờ điểm UET")
-
         boardUI.children.forEach {
             // set position cho các ô
             val pos = Position(game.board.size.width - 1 - GridPane.getColumnIndex(it), game.board.size.height - 1 - GridPane.getRowIndex(it))
@@ -81,7 +78,6 @@ class GameScreen: View() {
             pieceMap[piece] = imgView
         })
         game.addPropertyChangeListener("WINNER", {
-            val player = it.newValue as ChessSide
             pieceMap.values.forEach {
                 it.cursorProperty().set(Cursor.DEFAULT)
             }
@@ -156,16 +152,6 @@ class GameScreen: View() {
         possibleNextPos.map { posMap[it.toString()] }.forEach {
             it!!.effectProperty().set(null)
         }
-    }
-
-    private fun selectedEffect() : Effect {
-        val effect = InnerShadow()
-        effect.blurTypeProperty().set(BlurType.ONE_PASS_BOX)
-        effect.chokeProperty().set(10.0)
-        effect.widthProperty().set(30.0)
-        effect.heightProperty().set(30.0)
-        effect.colorProperty().set(Color.valueOf("#e65100"))
-        return effect
     }
 
     private fun possibleEffect() : Effect {
