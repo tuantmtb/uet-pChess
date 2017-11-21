@@ -6,7 +6,6 @@ import edu.uet.entity.ChessPiece.Position
 import edu.uet.entity.ChessSide
 import javafx.scene.Cursor
 import javafx.scene.control.Label
-import javafx.scene.control.SplitPane
 import javafx.scene.effect.BlurType
 import javafx.scene.effect.Effect
 import javafx.scene.effect.InnerShadow
@@ -18,7 +17,7 @@ import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 
 class GameView : BaseView() {
-    override val root: SplitPane by fxml("/Game.fxml")
+    override val root: Pane by fxml("/Game.fxml")
     private val boardUI: GridPane by fxid("board")
     private var game = GameMaster()
     private val blackName: Label by fxid("blackName")
@@ -41,6 +40,11 @@ class GameView : BaseView() {
             posMap.put(pos.toString(), it as Pane)
         }
 
+        bind()
+        game.newGame()
+    }
+
+    private fun placePiecesOnBoard() {
         game.board.pieces.forEach {
             // Đặt các quân cờ vào các ô
             val imageView = ImageView(if (it.chessSide == ChessSide.BLACK) "knight_black.png" else "knight_white.png")
@@ -48,12 +52,15 @@ class GameView : BaseView() {
             imageView.fitWidth = 100.0
             imageView.userData = it
             imageView.setOnDragDetected { onChessPieceDragDetected(it) }
+            if (game.isTurnOf(it.chessSide)) {
+                imageView.cursor = Cursor.OPEN_HAND
+            } else {
+                imageView.cursor = Cursor.DEFAULT
+            }
             val pane = posMap[it.position.toString()]
             pane!!.children.add(imageView)
             pieceMap.put(it, imageView)
         }
-        bind()
-        updateTurn()
     }
 
     private fun bind() {
@@ -82,6 +89,9 @@ class GameView : BaseView() {
             pieceMap.values.forEach {
                 it.cursor = Cursor.DEFAULT
             }
+        })
+        game.addPropertyChangeListener("PIECES_PLACED", {
+            placePiecesOnBoard()
         })
     }
 
@@ -172,5 +182,9 @@ class GameView : BaseView() {
         effect.height = 30.0
         effect.color = Color.valueOf("GREEN")
         return effect
+    }
+
+    fun newGame() {
+        game.newGame()
     }
 }

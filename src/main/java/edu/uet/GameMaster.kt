@@ -10,20 +10,7 @@ import java.beans.PropertyChangeSupport
  * Created by tuantmtb on 10/31/17.
  */
 class GameMaster {
-    val board = ChessBoard(arrayListOf(
-            ChessPiece(ChessPiece.Position( 0, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 1, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 2, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 3, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 4, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 5, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 0, 5), ChessSide.BLACK),
-            ChessPiece(ChessPiece.Position( 1, 5), ChessSide.BLACK),
-            ChessPiece(ChessPiece.Position( 2, 5), ChessSide.BLACK),
-            ChessPiece(ChessPiece.Position( 3, 5), ChessSide.BLACK),
-            ChessPiece(ChessPiece.Position( 4, 5), ChessSide.BLACK),
-            ChessPiece(ChessPiece.Position( 5, 5), ChessSide.BLACK)
-    ), ChessBoard.Size(6, 6))
+    val board = ChessBoard(arrayListOf(), ChessBoard.Size(6, 6))
     private var turn : ChessSide = ChessSide.WHITE
     private val points = hashMapOf(
             Pair(ChessSide.BLACK, 0),
@@ -31,6 +18,35 @@ class GameMaster {
     )
     private val pointThreshold = 10
     private val propChangeSupport = PropertyChangeSupport(this)
+
+    fun newGame() {
+        points.forEach { side, point ->
+            points[side] = 0
+            propChangeSupport.firePropertyChange("${side.name}_POINT_CHANGED", point, points[side])
+        }
+
+        board.pieces.forEach { propChangeSupport.firePropertyChange("PIECE_DIED", it, null)}
+        val oldPieces = board.pieces
+        board.pieces = arrayListOf(
+                ChessPiece(ChessPiece.Position(0, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position(1, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position(2, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position(3, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position(4, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position(5, 0), ChessSide.WHITE),
+                ChessPiece(ChessPiece.Position(0, 5), ChessSide.BLACK),
+                ChessPiece(ChessPiece.Position(1, 5), ChessSide.BLACK),
+                ChessPiece(ChessPiece.Position(2, 5), ChessSide.BLACK),
+                ChessPiece(ChessPiece.Position(3, 5), ChessSide.BLACK),
+                ChessPiece(ChessPiece.Position(4, 5), ChessSide.BLACK),
+                ChessPiece(ChessPiece.Position(5, 5), ChessSide.BLACK)
+        )
+        propChangeSupport.firePropertyChange("PIECES_PLACED", oldPieces, board.pieces)
+
+        val oldTurn = turn
+        turn = ChessSide.WHITE
+        propChangeSupport.firePropertyChange("TURN_SWITCHED", oldTurn, turn)
+    }
 
     fun addPropertyChangeListener(propName: String, listener: (evt: PropertyChangeEvent) -> Unit) {
         propChangeSupport.addPropertyChangeListener(propName, listener)
