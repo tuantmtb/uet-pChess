@@ -58,7 +58,7 @@ class GameMaster {
         propChangeSupport.firePropertyChange("TURN_SWITCHED", oldValue, turn)
     }
 
-    private fun winner() : ChessSide? {
+    fun winner() : ChessSide? {
         if (points[ChessSide.BLACK]!! >= pointThreshold) {
             return ChessSide.BLACK
         }

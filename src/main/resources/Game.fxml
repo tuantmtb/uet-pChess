@@ -135,8 +135,8 @@
         <menus>
           <Menu mnemonicParsing="false" text="Game">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#newGame" text="New game" />
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuNewGame" text="New game" />
+              <MenuItem mnemonicParsing="false" text="Close" onAction="#menuClose" />
             </items>
           </Menu>
         </menus>

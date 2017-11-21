@@ -4,6 +4,7 @@ import edu.uet.GameMaster
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessPiece.Position
 import edu.uet.entity.ChessSide
+import javafx.application.Platform
 import javafx.scene.Cursor
 import javafx.scene.control.Label
 import javafx.scene.effect.BlurType
@@ -15,6 +16,7 @@ import javafx.scene.layout.GridPane
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
+import tornadofx.information
 
 class GameView : BaseView() {
     override val root: Pane by fxml("/Game.fxml")
@@ -89,6 +91,7 @@ class GameView : BaseView() {
             pieceMap.values.forEach {
                 it.cursor = Cursor.DEFAULT
             }
+            information("Người chiến thắng", game.winner()!!.name)
         })
         game.addPropertyChangeListener("PIECES_PLACED", {
             placePiecesOnBoard()
@@ -184,7 +187,11 @@ class GameView : BaseView() {
         return effect
     }
 
-    fun newGame() {
+    fun menuNewGame() {
         game.newGame()
+    }
+
+    fun menuClose() {
+        Platform.exit()
     }
 }
