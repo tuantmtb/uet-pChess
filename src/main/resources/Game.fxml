@@ -37,24 +37,8 @@
                   <children>
                       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F57C00;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFA726;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F57C00;" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                     <children>
-                        <Label layoutX="44.0" layoutY="32.0" mouseTransparent="true" text="1" textAlignment="CENTER">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </AnchorPane>
-                      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFA726;" GridPane.columnIndex="3" GridPane.rowIndex="0">
-                          <children>
-                              <Label layoutX="44.0" layoutY="32.0" mouseTransparent="true" text="2" textAlignment="CENTER">
-                                  <font>
-                                      <Font size="24.0" />
-                                  </font>
-                              </Label>
-                          </children>
-                      </AnchorPane>
+                      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F57C00;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFA726;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
                       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F57C00;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
                       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFA726;" GridPane.columnIndex="5" GridPane.rowIndex="0" />
       
@@ -88,24 +72,8 @@
       
                       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFA726;" GridPane.columnIndex="0" GridPane.rowIndex="5" />
                       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F57C00;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFA726;" GridPane.columnIndex="2" GridPane.rowIndex="5">
-                          <children>
-                              <Label layoutX="44.0" layoutY="32.0" mouseTransparent="true" text="2" textAlignment="CENTER">
-                                  <font>
-                                      <Font size="24.0" />
-                                  </font>
-                              </Label>
-                          </children>
-                      </AnchorPane>
-                      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F57C00;" GridPane.columnIndex="3" GridPane.rowIndex="5">
-                          <children>
-                              <Label layoutX="44.0" layoutY="32.0" mouseTransparent="true" text="1" textAlignment="CENTER">
-                                  <font>
-                                      <Font size="24.0" />
-                                  </font>
-                              </Label>
-                          </children>
-                      </AnchorPane>
+                      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFA726;" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F57C00;" GridPane.columnIndex="3" GridPane.rowIndex="5" />
                       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #FFA726;" GridPane.columnIndex="4" GridPane.rowIndex="5" />
                       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F57C00;" GridPane.columnIndex="5" GridPane.rowIndex="5" />
       
@@ -114,7 +82,7 @@
               <Pane prefHeight="200.0" prefWidth="200.0">
                   <children>
                       <Label fx:id="blackName" layoutX="81.0" layoutY="32.0" mouseTransparent="true" text="Player 2" />
-                      <Label fx:id="whiteName" layoutX="81.0" layoutY="499.0" mouseTransparent="true" text="Player 1" />
+                      <Label fx:id="whiteName" layoutX="81.0" layoutY="499.0" mouseTransparent="true" text="Player 1" textFill="RED" />
                       <Label fx:id="blackPoint" layoutX="96.0" layoutY="56.0" mouseTransparent="true" text="0">
                           <font>
                               <Font size="24.0" />
@@ -136,7 +104,7 @@
           <Menu mnemonicParsing="false" text="Game">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#menuNewGame" text="New game" />
-              <MenuItem mnemonicParsing="false" text="Close" onAction="#menuClose" />
+              <MenuItem mnemonicParsing="false" onAction="#menuClose" text="Close" />
             </items>
           </Menu>
         </menus>

@@ -1,5 +1,6 @@
 package edu.uet.view
 
+import edu.uet.ChessConfig
 import edu.uet.GameMaster
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessPiece.Position
@@ -40,6 +41,26 @@ class GameView : BaseView() {
             it.setOnDragOver { onPositionDragOver(it) }
             it.setOnDragDone { onChessPieceDragDone(it) }
             posMap.put(pos.toString(), it as Pane)
+
+            val wEarn = pos.earnedPointsForSide(ChessSide.WHITE, game.board.size)
+            val bEarn = pos.earnedPointsForSide(ChessSide.BLACK, game.board.size)
+            if (wEarn != 0 || bEarn != 0) {
+                val imgView = ImageView(
+                        when (wEarn) {
+                            ChessConfig.POINT_1 -> "W1.png"
+                            ChessConfig.POINT_2 -> "W2.png"
+                            else -> when (bEarn) {
+                                ChessConfig.POINT_1 -> "B1.png"
+                                ChessConfig.POINT_2 -> "B2.png"
+                                else -> null // won't happen
+                            }
+                        }
+                )
+                imgView.fitWidth = 100.0
+                imgView.fitHeight = 100.0
+                imgView.mouseTransparentProperty().set(true)
+                it.children.add(imgView)
+            }
         }
 
         bind()
@@ -49,7 +70,7 @@ class GameView : BaseView() {
     private fun placePiecesOnBoard() {
         game.board.pieces.forEach {
             // Đặt các quân cờ vào các ô
-            val imageView = ImageView(if (it.chessSide == ChessSide.BLACK) "knight_black.png" else "knight_white.png")
+            val imageView = ImageView(if (it.chessSide == ChessSide.BLACK) "BN.png" else "WN.png")
             imageView.fitHeight = 100.0
             imageView.fitWidth = 100.0
             imageView.userData = it

@@ -10,7 +10,7 @@ class ChessApplication : App(MainMenuView::class) {
     override fun start(stage: Stage) {
         super.start(stage)
         with(FX.primaryStage) {
-            icons += Image("knight_black.png")
+            icons += Image("BN.png")
             resizableProperty().set(false)
         }
         reloadViewsOnFocus()
