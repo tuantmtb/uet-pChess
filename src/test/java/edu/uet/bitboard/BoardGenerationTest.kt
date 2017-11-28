@@ -12,15 +12,15 @@ class BoardGenerationTest {
     @Test
     fun arrayToBitBoards() {
         val chessBoard = arrayOf(
+                arrayOf(" ", " ", " ", "N", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
-                arrayOf(" ", " ", "N", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
-                arrayOf(" ", "n", " ", "n", " ", " ", " ", " "),
+                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "))
 
-        println(BoardGeneration.arrayToBitBoards(chessBoard).BN)
+        println(BoardGeneration.arrayToBitBoards(chessBoard).WN)
     }
 }

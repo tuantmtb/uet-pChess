@@ -1,5 +1,6 @@
 package edu.uet.bitboard
 
+import org.junit.Test
 import java.util.*
 import java.util.Arrays
 
@@ -58,4 +59,6 @@ object Helper {
             println(Arrays.toString(chessBoard[i]))
         }
     }
+
+
 }
