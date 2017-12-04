@@ -1,8 +1,8 @@
 package edu.uet
 
 object ChessConfig {
-    val BOARD_HEIGHT = 6
-    val BOARD_WIDTH = 6
+    val BOARD_HEIGHT = 8
+    val BOARD_WIDTH = 8
     val VALUE_OF_EACH_REMAINING_PIECE = 2
     val POINT_1 = 1
     val POINT_2 = 2

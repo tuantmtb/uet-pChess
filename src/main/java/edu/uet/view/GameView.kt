@@ -14,9 +14,7 @@ import javafx.scene.effect.Effect
 import javafx.scene.effect.InnerShadow
 import javafx.scene.image.ImageView
 import javafx.scene.input.*
-import javafx.scene.layout.GridPane
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import tornadofx.hide
@@ -26,7 +24,7 @@ import tornadofx.show
 class GameView : BaseView() {
     override val root: Pane by fxml("/Game.fxml")
 
-    private val boardUI: GridPane by fxid("board")
+    private val boardGrid: GridPane by fxid("board")
     private val bName: Label by fxid("bName")
     private val wName: Label by fxid("wName")
     private val bPoint: Label by fxid("bPoint")
@@ -37,6 +35,7 @@ class GameView : BaseView() {
     private val wCDSection: Pane by fxid("wCDSection")
     private val wCDLabel: Label by fxid("wCDLabel")
     private val wCDProgress: ProgressBar by fxid("wCDProgress")
+    private val rightSideBar: VBox by fxid("rightSideBar")
 
     private var game = GameMaster()
     private var nextPane: Pane? = null
@@ -45,46 +44,95 @@ class GameView : BaseView() {
     private val possibleNextPos = arrayListOf<Position>()
     private var draggingPiece: ChessPiece? = null
 
+    private val GRID_SIZE = 75.0 // pixels
+    private val BACKGROUND_DARK_COLOR = "#F57C00"
+    private val BACKGROUND_LIGHT_COLOR = "#FFA726"
+
     init {
-        boardUI.children.forEach {
-            // set position cho các ô
-            val pos = Position(game.board.size.width - 1 - GridPane.getColumnIndex(it), game.board.size.height - 1 - GridPane.getRowIndex(it))
-            it.userData = pos
-            it.setOnDragOver { onPositionDragOver(it) }
-            it.setOnDragDone { onChessPieceDragDone(it) }
-            posMap.put(pos.toString(), it as Pane)
-
-            val wEarn = pos.earnedPointsForSide(ChessSide.WHITE, game.board.size)
-            val bEarn = pos.earnedPointsForSide(ChessSide.BLACK, game.board.size)
-            if (wEarn != 0 || bEarn != 0) {
-                val imgView = ImageView(
-                        when (wEarn) {
-                            ChessConfig.POINT_1 -> "W1.png"
-                            ChessConfig.POINT_2 -> "W2.png"
-                            else -> when (bEarn) {
-                                ChessConfig.POINT_1 -> "B1.png"
-                                ChessConfig.POINT_2 -> "B2.png"
-                                else -> null // won't happen
-                            }
-                        }
-                )
-                imgView.fitWidth = 100.0
-                imgView.fitHeight = 100.0
-                imgView.mouseTransparentProperty().set(true)
-                it.children.add(imgView)
-            }
-        }
-
+        initBoardGrid()
+        initRightSideBar()
         bind()
         game.newGame()
+    }
+
+    private fun initBoardGrid() {
+        // Clear demo
+        boardGrid.columnConstraints.clear()
+        boardGrid.rowConstraints.clear()
+        boardGrid.children.clear()
+
+        boardGrid.prefWidth = GRID_SIZE * game.board.size.width
+        boardGrid.prefHeight = GRID_SIZE * game.board.size.height
+
+        (0 until game.board.size.width).forEach {
+            val c = ColumnConstraints()
+            c.prefWidth = GRID_SIZE
+            boardGrid.columnConstraints.add(c)
+        }
+
+        (0 until game.board.size.height).forEach { row ->
+            val r = RowConstraints()
+            r.prefHeight = GRID_SIZE
+            boardGrid.rowConstraints.add(r)
+
+            (0 until game.board.size.width).forEach { col ->
+                val p = AnchorPane()
+                val color = if ((row + col) % 2 == 0) BACKGROUND_DARK_COLOR else BACKGROUND_LIGHT_COLOR
+                p.style = "-fx-background-color: $color;"
+                p.prefHeight = GRID_SIZE
+                p.prefWidth = GRID_SIZE
+
+                val pos = Position(game.board.size.width - 1 - col, game.board.size.height - 1 - row)
+                p.userData = pos
+                p.setOnDragOver { onPositionDragOver(it) }
+                p.setOnDragDone { onChessPieceDragDone(it) }
+                posMap.put(pos.toString(), p as Pane)
+
+                boardGrid.add(p, col, row)
+
+                val imgView = initEarnedPointsPosition(pos)
+                if (imgView != null) {
+                    p.children.add(imgView)
+                }
+            }
+        }
+    }
+
+    private fun initRightSideBar() {
+        rightSideBar.prefHeight = boardGrid.prefHeight
+        rightSideBar.children.map { it as VBox }.forEach { it.prefHeight = rightSideBar.prefHeight/2 }
+    }
+
+    private fun initEarnedPointsPosition(pos: Position): ImageView? {
+        val wEarn = pos.earnedPointsForSide(ChessSide.WHITE, game.board.size)
+        val bEarn = pos.earnedPointsForSide(ChessSide.BLACK, game.board.size)
+        if (wEarn != 0 || bEarn != 0) {
+            val imgView = ImageView(
+                    when (wEarn) {
+                        ChessConfig.POINT_1 -> "W1.png"
+                        ChessConfig.POINT_2 -> "W2.png"
+                        else -> when (bEarn) {
+                            ChessConfig.POINT_1 -> "B1.png"
+                            ChessConfig.POINT_2 -> "B2.png"
+                            else -> null // won't happen
+                        }
+                    }
+            )
+            imgView.fitWidth = GRID_SIZE
+            imgView.fitHeight = GRID_SIZE
+            imgView.mouseTransparentProperty().set(true)
+            return imgView
+        } else {
+            return null
+        }
     }
 
     private fun placePiecesOnBoard() {
         game.board.pieces.forEach {
             // Đặt các quân cờ vào các ô
             val imageView = ImageView(if (it.chessSide == ChessSide.BLACK) "BN.png" else "WN.png")
-            imageView.fitHeight = 100.0
-            imageView.fitWidth = 100.0
+            imageView.fitHeight = GRID_SIZE
+            imageView.fitWidth = GRID_SIZE
             imageView.userData = it
             imageView.setOnDragDetected { onChessPieceDragDetected(it) }
             if (game.isTurnOf(it.chessSide)) {

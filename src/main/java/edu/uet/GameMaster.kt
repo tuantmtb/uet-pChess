@@ -10,11 +10,11 @@ import java.beans.PropertyChangeSupport
  * Created by tuantmtb on 10/31/17.
  */
 class GameMaster {
-    val board = ChessBoard(arrayListOf(), ChessBoard.Size(6, 6))
+    val board = ChessBoard(arrayListOf(), ChessBoard.Size(ChessConfig.BOARD_WIDTH, ChessConfig.BOARD_HEIGHT))
     private var turn : ChessSide = ChessSide.WHITE
     private val points = hashMapOf(
-            Pair(ChessSide.BLACK, 0),
-            Pair(ChessSide.WHITE, 0)
+            Pair<ChessSide, Int?>(ChessSide.BLACK, null),
+            Pair<ChessSide, Int?>(ChessSide.WHITE, null)
     )
     private val pointThreshold = 10
     private val propChangeSupport = PropertyChangeSupport(this)
@@ -33,22 +33,12 @@ class GameMaster {
         }
 
         board.pieces.forEach { propChangeSupport.firePropertyChange("PIECE_DIED", it, null)}
-        val oldPieces = board.pieces
-        board.pieces = arrayListOf(
-                ChessPiece(ChessPiece.Position(0, 0), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(1, 0), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(2, 0), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(3, 0), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(4, 0), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(5, 0), ChessSide.WHITE),
-                ChessPiece(ChessPiece.Position(0, 5), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(1, 5), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(2, 5), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(3, 5), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(4, 5), ChessSide.BLACK),
-                ChessPiece(ChessPiece.Position(5, 5), ChessSide.BLACK)
-        )
-        propChangeSupport.firePropertyChange("PIECES_PLACED", oldPieces, board.pieces)
+        board.pieces.clear()
+        (0 until board.size.width).filter { it != board.size.width/2 && it != board.size.width/2 - 1 }.forEach {
+            board.pieces.add(ChessPiece(ChessPiece.Position(it, 0), ChessSide.WHITE))
+            board.pieces.add(ChessPiece(ChessPiece.Position(it, board.size.height - 1), ChessSide.BLACK))
+        }
+        propChangeSupport.firePropertyChange("PIECES_PLACED", null, board.pieces)
 
         val oldTurn = turn
         turn = ChessSide.WHITE
@@ -70,23 +60,14 @@ class GameMaster {
     }
 
     fun winner() : ChessSide? {
-        if (points[ChessSide.BLACK]!! >= pointThreshold) {
-            return ChessSide.BLACK
+        return when {
+            points[ChessSide.BLACK]!! >= pointThreshold -> ChessSide.BLACK
+            points[ChessSide.WHITE]!! >= pointThreshold -> ChessSide.WHITE
+            board.pieces.all { it.chessSide == ChessSide.WHITE } -> ChessSide.WHITE
+            board.pieces.all { it.chessSide == ChessSide.BLACK } -> ChessSide.BLACK
+            else -> null
         }
 
-        if (points[ChessSide.WHITE]!! >= pointThreshold) {
-            return ChessSide.WHITE
-        }
-
-        if (board.pieces.all { it.chessSide == ChessSide.WHITE }) {
-            return ChessSide.WHITE
-        }
-
-        if (board.pieces.all { it.chessSide == ChessSide.BLACK }) {
-            return ChessSide.BLACK
-        }
-
-        return null
     }
 
     fun hasWinner() : Boolean {
