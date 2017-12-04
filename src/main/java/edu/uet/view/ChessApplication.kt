@@ -4,7 +4,6 @@ import javafx.scene.image.Image
 import javafx.stage.Stage
 import tornadofx.App
 import tornadofx.FX
-import tornadofx.reloadViewsOnFocus
 
 class ChessApplication : App(MainMenuView::class) {
     override fun start(stage: Stage) {
@@ -13,7 +12,6 @@ class ChessApplication : App(MainMenuView::class) {
             icons += Image("BN.png")
             resizableProperty().set(false)
         }
-        reloadViewsOnFocus()
     }
 }
 

@@ -8,25 +8,37 @@ import edu.uet.entity.ChessSide
 import javafx.application.Platform
 import javafx.scene.Cursor
 import javafx.scene.control.Label
+import javafx.scene.control.ProgressBar
 import javafx.scene.effect.BlurType
 import javafx.scene.effect.Effect
 import javafx.scene.effect.InnerShadow
 import javafx.scene.image.ImageView
 import javafx.scene.input.*
 import javafx.scene.layout.GridPane
+import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
+import tornadofx.hide
 import tornadofx.information
+import tornadofx.show
 
 class GameView : BaseView() {
     override val root: Pane by fxml("/Game.fxml")
+
     private val boardUI: GridPane by fxid("board")
+    private val bName: Label by fxid("bName")
+    private val wName: Label by fxid("wName")
+    private val bPoint: Label by fxid("bPoint")
+    private val wPoint: Label by fxid("wPoint")
+    private val bCDSection: Pane by fxid("bCDSection")
+    private val bCDLabel: Label by fxid("bCDLabel")
+    private val bCDProgress: ProgressBar by fxid("bCDProgress")
+    private val wCDSection: Pane by fxid("wCDSection")
+    private val wCDLabel: Label by fxid("wCDLabel")
+    private val wCDProgress: ProgressBar by fxid("wCDProgress")
+
     private var game = GameMaster()
-    private val blackName: Label by fxid("blackName")
-    private val whiteName: Label by fxid("whiteName")
-    private val blackPoint: Label by fxid("blackPoint")
-    private val whitePoint: Label by fxid("whitePoint")
     private var nextPane: Pane? = null
     private val pieceMap =  HashMap<ChessPiece, ImageView>()
     private val posMap = HashMap<String, Pane>()
@@ -88,10 +100,10 @@ class GameView : BaseView() {
 
     private fun bind() {
         game.addPropertyChangeListener("WHITE_POINT_CHANGED", {
-            whitePoint.text = it.newValue.toString()
+            wPoint.text = it.newValue.toString()
         })
         game.addPropertyChangeListener("BLACK_POINT_CHANGED", {
-            blackPoint.text = it.newValue.toString()
+            bPoint.text = it.newValue.toString()
         })
         game.addPropertyChangeListener("TURN_SWITCHED", { updateTurn() })
         game.addPropertyChangeListener("PIECE_DIED", {
@@ -112,10 +124,23 @@ class GameView : BaseView() {
             pieceMap.values.forEach {
                 it.cursor = Cursor.DEFAULT
             }
-            information("Người chiến thắng", game.winner()!!.name)
+            information("Người chiến thắng: " + game.winner()!!.name)
         })
         game.addPropertyChangeListener("PIECES_PLACED", {
             placePiecesOnBoard()
+        })
+        game.addPropertyChangeListener("COUNT_DOWN_TICK", {
+            val value = it.newValue as Int
+            val progress = value.toDouble() / ChessConfig.INITIAL_COUNT_DOWN
+            Platform.runLater {
+                if (game.isTurnOf(ChessSide.WHITE)) {
+                    wCDLabel.text = value.toString()
+                    wCDProgress.progress = progress
+                } else {
+                    bCDLabel.text = value.toString()
+                    bCDProgress.progress = progress
+                }
+            }
         })
     }
 
@@ -170,11 +195,15 @@ class GameView : BaseView() {
 
     private fun updateTurn() {
         if (game.isTurnOf(ChessSide.BLACK)) {
-            blackName.textFill = Paint.valueOf("red")
-            whiteName.textFill = Paint.valueOf("black")
+            bName.textFill = Paint.valueOf("red")
+            wName.textFill = Paint.valueOf("black")
+            bCDSection.show()
+            wCDSection.hide()
         } else {
-            blackName.textFill = Paint.valueOf("black")
-            whiteName.textFill = Paint.valueOf("red")
+            bName.textFill = Paint.valueOf("black")
+            wName.textFill = Paint.valueOf("red")
+            bCDSection.hide()
+            wCDSection.show()
         }
         pieceMap.forEach { piece, imgView ->
             if (game.isTurnOf(piece.chessSide)) {

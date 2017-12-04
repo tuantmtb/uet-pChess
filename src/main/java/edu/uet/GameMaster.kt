@@ -18,6 +18,13 @@ class GameMaster {
     )
     private val pointThreshold = 10
     private val propChangeSupport = PropertyChangeSupport(this)
+    private var timer = CountDownTimer(propChangeSupport)
+
+    init {
+        propChangeSupport.addPropertyChangeListener("COUNT_DOWN_TIMEOUT", {
+            nextTurn()
+        })
+    }
 
     fun newGame() {
         points.forEach { side, point ->
@@ -46,6 +53,8 @@ class GameMaster {
         val oldTurn = turn
         turn = ChessSide.WHITE
         propChangeSupport.firePropertyChange("TURN_SWITCHED", oldTurn, turn)
+
+        timer.restart()
     }
 
     fun addPropertyChangeListener(propName: String, listener: (evt: PropertyChangeEvent) -> Unit) {
@@ -56,6 +65,8 @@ class GameMaster {
         val oldValue = turn
         turn = if (isTurnOf(ChessSide.WHITE)) ChessSide.BLACK else ChessSide.WHITE
         propChangeSupport.firePropertyChange("TURN_SWITCHED", oldValue, turn)
+
+        timer.restart()
     }
 
     fun winner() : ChessSide? {
@@ -103,6 +114,7 @@ class GameMaster {
                 )
                 if (hasWinner()) {
                     propChangeSupport.firePropertyChange("WINNER", null, winner())
+                    timer.stop()
                 } else {
                     nextTurn()
                 }

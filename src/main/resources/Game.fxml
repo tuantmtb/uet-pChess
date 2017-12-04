@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
@@ -79,22 +82,50 @@
       
                   </children>
               </GridPane>
-              <Pane prefHeight="200.0" prefWidth="200.0">
+              <VBox alignment="CENTER" prefHeight="600.0" prefWidth="200.0">
                   <children>
-                      <Label fx:id="blackName" layoutX="81.0" layoutY="32.0" mouseTransparent="true" text="Player 2" />
-                      <Label fx:id="whiteName" layoutX="81.0" layoutY="499.0" mouseTransparent="true" text="Player 1" textFill="RED" />
-                      <Label fx:id="blackPoint" layoutX="96.0" layoutY="56.0" mouseTransparent="true" text="0">
-                          <font>
-                              <Font size="24.0" />
-                          </font>
-                      </Label>
-                      <Label fx:id="whitePoint" layoutX="96.0" layoutY="464.0" mouseTransparent="true" text="0">
-                          <font>
-                              <Font size="24.0" />
-                          </font>
-                      </Label>
+                  <VBox alignment="CENTER" prefHeight="300.0" prefWidth="200.0">
+                     <children>
+                        <VBox alignment="CENTER" visible="false" fx:id="bCDSection">
+                           <children>
+                               <Label mouseTransparent="true" text="30" fx:id="bCDLabel" />
+                               <ProgressBar prefWidth="150.0" progress="1.0" fx:id="bCDProgress" />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </VBox>
+
+                            <Label fx:id="bName" mouseTransparent="true" text="Player 2" />
+                            <Label fx:id="bPoint" mouseTransparent="true" text="0">
+                                <font>
+                                    <Font size="24.0" />
+                                </font>
+                            </Label>
+                         
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="300.0" prefWidth="200.0">
+                     <children>
+                            <Label fx:id="wPoint" mouseTransparent="true" text="0">
+                                <font>
+                                    <Font size="24.0" />
+                                </font>
+                            </Label>
+                            <Label fx:id="wName" mouseTransparent="true" text="Player 1" textFill="RED" />
+                        <VBox alignment="CENTER" fx:id="wCDSection">
+                            <children>
+                                <ProgressBar prefWidth="150.0" progress="1.0" fx:id="wCDProgress" />
+                                <Label mouseTransparent="true" text="30" fx:id="wCDLabel" />
+                            </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </VBox>
+                     </children>
+                  </VBox>
                   </children>
-              </Pane>
+              </VBox>
           </children>
       </HBox>
    </center>
@@ -103,7 +134,10 @@
         <menus>
           <Menu mnemonicParsing="false" text="Game">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#menuNewGame" text="New game" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuNewGame" text="New game">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="N" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
               <MenuItem mnemonicParsing="false" onAction="#menuClose" text="Close" />
             </items>
           </Menu>
