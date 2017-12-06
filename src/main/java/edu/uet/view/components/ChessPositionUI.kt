@@ -1,6 +1,7 @@
 package edu.uet.view.components
 
 import edu.uet.ChessConfig
+import edu.uet.GameDispatcher
 import edu.uet.entity.ChessBoard
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessSide
@@ -40,6 +41,12 @@ class ChessPositionUI(row: Int, col: Int, size: ChessBoard.Size): AnchorPane() {
         if (wEarn != 0 || bEarn != 0) {
             add(EarnedPointsPositionLayer(wEarn, bEarn))
         }
+
+        GameDispatcher.on("PIECE_DIED", {
+            if (pieceUI?.userData == it.oldValue) {
+                removePiece()
+            }
+        })
     }
 
     override fun getUserData(): ChessPiece.Position {
@@ -47,19 +54,20 @@ class ChessPositionUI(row: Int, col: Int, size: ChessBoard.Size): AnchorPane() {
     }
 
     fun removePiece(): ChessPieceUI? {
-        val oldValue = piece
-        piece = null
+        val oldValue = pieceUI
+        pieceUI = null
         return oldValue
     }
 
-    fun movePieceTo(pos: ChessPositionUI) {
-        pos.piece = removePiece()
+    fun movePieceTo(posUI: ChessPositionUI) {
+        posUI.pieceUI = removePiece()
     }
 
-    var piece: ChessPieceUI? = null
+    var pieceUI: ChessPieceUI? = null
         set(value) {
             if (field != null) {
                 children.remove(field)
+                field?.unbind()
             }
             if (value != null) {
                 add(value)

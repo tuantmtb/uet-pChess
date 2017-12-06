@@ -4,7 +4,6 @@ import edu.uet.GameDispatcher
 import edu.uet.GameMaster
 import edu.uet.entity.ChessPiece
 import edu.uet.view.Styles
-import javafx.application.Platform
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.DragEvent
 import javafx.scene.input.MouseEvent
@@ -13,7 +12,7 @@ import javafx.scene.layout.ColumnConstraints
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.RowConstraints
 
-class ChessBoardUI(val game: GameMaster): GridPane() {
+class ChessBoardUI(private val game: GameMaster): GridPane() {
     class ChessColumnConstraints: ColumnConstraints(Styles.GRID_SIZE)
 
     class ChessRowConstraints: RowConstraints(Styles.GRID_SIZE)
@@ -40,25 +39,20 @@ class ChessBoardUI(val game: GameMaster): GridPane() {
     }
 
     private fun bind() {
-        GameDispatcher.listen("PIECE_DIED", {
-            val posUI = findChessPieceUI(it.oldValue as ChessPiece)?.parent as ChessPositionUI?
-            posUI?.removePiece()
-        })
-
-        GameDispatcher.listen("PIECE_MOVED", {
+        GameDispatcher.on("PIECE_MOVED", {
             val oldPosUI = findChessPositionUI(it.oldValue as ChessPiece.Position)
             val newPosUI = findChessPositionUI(it.newValue as ChessPiece.Position)
             oldPosUI.movePieceTo(newPosUI)
         })
 
-        GameDispatcher.listen("PIECE_ADDED", {
+        GameDispatcher.on("PIECE_ADDED", {
             val piece = it.newValue as ChessPiece
 
             val pieceUI = ChessPieceUI(piece)
             pieceUI.setOnDragDetected { onChessPieceUIDragDetected(it) }
 
             val posUI = findChessPositionUI(piece.position)
-            posUI.piece = pieceUI
+            posUI.pieceUI = pieceUI
         })
     }
 
@@ -67,7 +61,7 @@ class ChessBoardUI(val game: GameMaster): GridPane() {
     }
 
     private fun findChessPieceUI(piece: ChessPiece): ChessPieceUI? {
-        return findChessPositionUI(piece.position).piece
+        return findChessPositionUI(piece.position).pieceUI
     }
 
     private var targetPositionUI: ChessPositionUI? = null

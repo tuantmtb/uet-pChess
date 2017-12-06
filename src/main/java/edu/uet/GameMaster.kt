@@ -12,7 +12,7 @@ class GameMaster {
         private set(newValue) {
             val oldValue = field
             field = newValue
-            GameDispatcher.dispatch("TURN_SWITCHED", oldValue, newValue)
+            GameDispatcher.fire("TURN_SWITCHED", oldValue, newValue)
         }
 
     private val points = hashMapOf(
@@ -21,26 +21,26 @@ class GameMaster {
     )
 
     private var timer = CountDownTimer(
-            onTick = { oldValue, newValue -> GameDispatcher.dispatch("COUNT_DOWN_TICK", oldValue, newValue) },
+            onTick = { oldValue, newValue -> GameDispatcher.fire("COUNT_DOWN_TICK", oldValue, newValue) },
             onTimeOut = { nextTurn() }
     )
 
     fun newGame() {
         points.forEach { side, point ->
             points[side] = 0
-            GameDispatcher.dispatch("${side.name}_POINT_CHANGED", point, points[side])
+            GameDispatcher.fire("${side.name}_POINT_CHANGED", point, points[side])
         }
 
-        board.pieces.forEach { GameDispatcher.dispatch("PIECE_DIED", it, null)}
+        board.pieces.forEach { GameDispatcher.fire("PIECE_DIED", it, null)}
         board.pieces.clear()
         (0 until board.size.width).filter { it != board.size.width/2 && it != board.size.width/2 - 1 }.forEach {
             val wPiece = ChessPiece(ChessPiece.Position(it, 0), ChessSide.WHITE)
             board.pieces.add(wPiece)
-            GameDispatcher.dispatch("PIECE_ADDED", null, wPiece)
+            GameDispatcher.fire("PIECE_ADDED", null, wPiece)
 
             val bPiece = ChessPiece(ChessPiece.Position(it, board.size.height - 1), ChessSide.BLACK)
             board.pieces.add(bPiece)
-            GameDispatcher.dispatch("PIECE_ADDED", null, bPiece)
+            GameDispatcher.fire("PIECE_ADDED", null, bPiece)
         }
 
         turn = ChessSide.WHITE
@@ -73,20 +73,20 @@ class GameMaster {
                 board.move(
                         chessPiece, position,
                         {
-                            GameDispatcher.dispatch("PIECE_DIED", it, null)
+                            GameDispatcher.fire("PIECE_DIED", it, null)
                         },
                         { side, point ->
                             val oldValue = points[side]!!
                             points[side] = oldValue + point
-                            GameDispatcher.dispatch("${side.name}_POINT_CHANGED", oldValue, points[side])
+                            GameDispatcher.fire("${side.name}_POINT_CHANGED", oldValue, points[side])
                         },
                         {
-                            GameDispatcher.dispatch("PIECE_MOVED", oldPos, it.position)
+                            GameDispatcher.fire("PIECE_MOVED", oldPos, it.position)
                             oldPos = it.position
                         }
                 )
                 if (hasWinner()) {
-                    GameDispatcher.dispatch("WINNER", null, winner())
+                    GameDispatcher.fire("WINNER", null, winner())
                     turn = null
                     timer.stop()
                 } else {

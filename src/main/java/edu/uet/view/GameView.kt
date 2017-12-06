@@ -44,13 +44,13 @@ class GameView : BaseView() {
     }
 
     private fun bind() {
-        GameDispatcher.listen("WHITE_POINT_CHANGED", { wPoint.text = it.newValue.toString() })
-        GameDispatcher.listen("BLACK_POINT_CHANGED", { bPoint.text = it.newValue.toString() })
-        GameDispatcher.listen("TURN_SWITCHED", { updateTurn() })
-        GameDispatcher.listen("WINNER", {
+        GameDispatcher.on("WHITE_POINT_CHANGED", { wPoint.text = it.newValue.toString() })
+        GameDispatcher.on("BLACK_POINT_CHANGED", { bPoint.text = it.newValue.toString() })
+        GameDispatcher.on("TURN_SWITCHED", { updateTurn() })
+        GameDispatcher.on("WINNER", {
             information("Người chiến thắng: " + game.winner()!!.name)
         })
-        GameDispatcher.listen("COUNT_DOWN_TICK", {
+        GameDispatcher.on("COUNT_DOWN_TICK", {
             Platform.runLater {
                 val value = it.newValue as Int
                 val progress = value.toDouble() / ChessConfig.COUNT_DOWN
