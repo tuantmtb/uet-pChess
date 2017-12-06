@@ -1,10 +1,12 @@
 package edu.uet.view
 
 import edu.uet.ChessConfig
+import edu.uet.GameDispatcher
 import edu.uet.GameMaster
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessPiece.Position
 import edu.uet.entity.ChessSide
+import edu.uet.view.themes.Default
 import javafx.application.Platform
 import javafx.scene.Cursor
 import javafx.scene.control.Label
@@ -44,9 +46,7 @@ class GameView : BaseView() {
     private val possibleNextPos = arrayListOf<Position>()
     private var draggingPiece: ChessPiece? = null
 
-    private val GRID_SIZE = 75.0 // pixels
-    private val BACKGROUND_DARK_COLOR = "#F57C00"
-    private val BACKGROUND_LIGHT_COLOR = "#FFA726"
+    private val theme = Default
 
     init {
         initBoardGrid()
@@ -61,26 +61,26 @@ class GameView : BaseView() {
         boardGrid.rowConstraints.clear()
         boardGrid.children.clear()
 
-        boardGrid.prefWidth = GRID_SIZE * game.board.size.width
-        boardGrid.prefHeight = GRID_SIZE * game.board.size.height
+        boardGrid.prefWidth = Styles.GRID_SIZE * game.board.size.width
+        boardGrid.prefHeight = Styles.GRID_SIZE * game.board.size.height
 
         (0 until game.board.size.width).forEach {
             val c = ColumnConstraints()
-            c.prefWidth = GRID_SIZE
+            c.prefWidth = Styles.GRID_SIZE
             boardGrid.columnConstraints.add(c)
         }
 
         (0 until game.board.size.height).forEach { row ->
             val r = RowConstraints()
-            r.prefHeight = GRID_SIZE
+            r.prefHeight = Styles.GRID_SIZE
             boardGrid.rowConstraints.add(r)
 
             (0 until game.board.size.width).forEach { col ->
                 val p = AnchorPane()
-                val color = if ((row + col) % 2 == 0) BACKGROUND_DARK_COLOR else BACKGROUND_LIGHT_COLOR
+                val color = if ((row + col) % 2 == 0) theme.BACKGROUND_DARK_COLOR else theme.BACKGROUND_LIGHT_COLOR
                 p.style = "-fx-background-color: $color;"
-                p.prefHeight = GRID_SIZE
-                p.prefWidth = GRID_SIZE
+                p.prefHeight = Styles.GRID_SIZE
+                p.prefWidth = Styles.GRID_SIZE
 
                 val pos = Position(game.board.size.width - 1 - col, game.board.size.height - 1 - row)
                 p.userData = pos
@@ -118,8 +118,8 @@ class GameView : BaseView() {
                         }
                     }
             )
-            imgView.fitWidth = GRID_SIZE
-            imgView.fitHeight = GRID_SIZE
+            imgView.fitWidth = Styles.GRID_SIZE
+            imgView.fitHeight = Styles.GRID_SIZE
             imgView.mouseTransparentProperty().set(true)
             return imgView
         } else {
@@ -131,35 +131,35 @@ class GameView : BaseView() {
         game.board.pieces.forEach {
             // Đặt các quân cờ vào các ô
             val imageView = ImageView(if (it.chessSide == ChessSide.BLACK) "BN.png" else "WN.png")
-            imageView.fitHeight = GRID_SIZE
-            imageView.fitWidth = GRID_SIZE
+            imageView.fitHeight = Styles.GRID_SIZE
+            imageView.fitWidth = Styles.GRID_SIZE
             imageView.userData = it
             imageView.setOnDragDetected { onChessPieceDragDetected(it) }
             if (game.isTurnOf(it.chessSide)) {
-                imageView.cursor = Cursor.OPEN_HAND
+                Platform.runLater { imageView.cursor = Cursor.OPEN_HAND }
             } else {
-                imageView.cursor = Cursor.DEFAULT
+                Platform.runLater { imageView.cursor = Cursor.DEFAULT }
             }
             val pane = posMap[it.position.toString()]
-            pane!!.children.add(imageView)
+            Platform.runLater { pane!!.children.add(imageView) }
             pieceMap.put(it, imageView)
         }
     }
 
     private fun bind() {
-        game.addPropertyChangeListener("WHITE_POINT_CHANGED", {
-            wPoint.text = it.newValue.toString()
+        GameDispatcher.listen("WHITE_POINT_CHANGED", {
+            Platform.runLater { wPoint.text = it.newValue.toString() }
         })
-        game.addPropertyChangeListener("BLACK_POINT_CHANGED", {
-            bPoint.text = it.newValue.toString()
+        GameDispatcher.listen("BLACK_POINT_CHANGED", {
+            Platform.runLater { bPoint.text = it.newValue.toString() }
         })
-        game.addPropertyChangeListener("TURN_SWITCHED", { updateTurn() })
-        game.addPropertyChangeListener("PIECE_DIED", {
+        GameDispatcher.listen("TURN_SWITCHED", { updateTurn() })
+        GameDispatcher.listen("PIECE_DIED", {
             val pane = pieceMap[it.oldValue as ChessPiece]!!.parent as Pane
             removePiece(pane)
             pieceMap.remove(it.oldValue as ChessPiece)
         })
-        game.addPropertyChangeListener("PIECE_MOVED", {
+        GameDispatcher.listen("PIECE_MOVED", {
             val oldPos = it.oldValue as Position
             val oldPane = posMap[oldPos.toString()]!!
             val newPos = it.newValue as Position
@@ -168,23 +168,25 @@ class GameView : BaseView() {
             val piece = imgView.userData as ChessPiece
             pieceMap[piece] = imgView
         })
-        game.addPropertyChangeListener("WINNER", {
+        GameDispatcher.listen("WINNER", {
             pieceMap.values.forEach {
-                it.cursor = Cursor.DEFAULT
+                Platform.runLater { it.cursor = Cursor.DEFAULT }
             }
             information("Người chiến thắng: " + game.winner()!!.name)
         })
-        game.addPropertyChangeListener("PIECES_PLACED", {
+        GameDispatcher.listen("PIECES_PLACED", {
             placePiecesOnBoard()
         })
-        game.addPropertyChangeListener("COUNT_DOWN_TICK", {
+        GameDispatcher.listen("COUNT_DOWN_TICK", {
             val value = it.newValue as Int
-            val progress = value.toDouble() / ChessConfig.INITIAL_COUNT_DOWN
-            Platform.runLater {
-                if (game.isTurnOf(ChessSide.WHITE)) {
+            val progress = value.toDouble() / ChessConfig.COUNT_DOWN
+            if (game.isTurnOf(ChessSide.WHITE)) {
+                Platform.runLater {
                     wCDLabel.text = value.toString()
                     wCDProgress.progress = progress
-                } else {
+                }
+            } else {
+                Platform.runLater {
                     bCDLabel.text = value.toString()
                     bCDProgress.progress = progress
                 }
@@ -231,33 +233,37 @@ class GameView : BaseView() {
 
     private fun movePiece(from: Pane, to: Pane): ImageView {
         val imgView = removePiece(from)
-        to.children.add(imgView)
+        Platform.runLater { to.children.add(imgView) }
         return imgView
     }
 
     private fun removePiece(pane: Pane) : ImageView {
         val imgView = pane.children.last { it is ImageView } as ImageView
-        pane.children.remove(imgView)
+        Platform.runLater { pane.children.remove(imgView) }
         return imgView
     }
 
     private fun updateTurn() {
         if (game.isTurnOf(ChessSide.BLACK)) {
-            bName.textFill = Paint.valueOf("red")
-            wName.textFill = Paint.valueOf("black")
-            bCDSection.show()
-            wCDSection.hide()
+            Platform.runLater {
+                bName.textFill = Paint.valueOf("red")
+                wName.textFill = Paint.valueOf("black")
+                bCDSection.show()
+                wCDSection.hide()
+            }
         } else {
-            bName.textFill = Paint.valueOf("black")
-            wName.textFill = Paint.valueOf("red")
-            bCDSection.hide()
-            wCDSection.show()
+            Platform.runLater {
+                bName.textFill = Paint.valueOf("black")
+                wName.textFill = Paint.valueOf("red")
+                bCDSection.hide()
+                wCDSection.show()
+            }
         }
         pieceMap.forEach { piece, imgView ->
             if (game.isTurnOf(piece.chessSide)) {
-                imgView.cursor = Cursor.OPEN_HAND
+                Platform.runLater { imgView.cursor = Cursor.OPEN_HAND }
             } else {
-                imgView.cursor = Cursor.DEFAULT
+                Platform.runLater { imgView.cursor = Cursor.DEFAULT }
             }
         }
     }
