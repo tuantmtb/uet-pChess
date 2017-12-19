@@ -5,47 +5,50 @@ import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessSide
 import edu.uet.utils.CountDownTimer
 
-/**
- * Created by tuantmtb on 10/31/17.
- */
 class GameMaster {
     val board = ChessBoard(arrayListOf(), ChessBoard.Size(ChessConfig.BOARD_WIDTH, ChessConfig.BOARD_HEIGHT))
-    private var turn : ChessSide? = null
+
+    var turn : ChessSide? = null
+        private set(newValue) {
+            val oldValue = field
+            field = newValue
+            GameDispatcher.fire("TURN_SWITCHED", oldValue, newValue)
+        }
+
     private val points = hashMapOf(
             Pair<ChessSide, Int?>(ChessSide.BLACK, null),
             Pair<ChessSide, Int?>(ChessSide.WHITE, null)
     )
+
     private var timer = CountDownTimer(
-            onTick = { oldValue, newValue -> GameDispatcher.dispatch("COUNT_DOWN_TICK", oldValue, newValue) },
+            onTick = { oldValue, newValue -> GameDispatcher.fire("COUNT_DOWN_TICK", oldValue, newValue) },
             onTimeOut = { nextTurn() }
     )
 
     fun newGame() {
         points.forEach { side, point ->
             points[side] = 0
-            GameDispatcher.dispatch("${side.name}_POINT_CHANGED", point, points[side])
+            GameDispatcher.fire("${side.name}_POINT_CHANGED", point, points[side])
         }
 
-        board.pieces.forEach { GameDispatcher.dispatch("PIECE_DIED", it, null)}
+        board.pieces.forEach { GameDispatcher.fire("PIECE_DIED", it, null)}
         board.pieces.clear()
         (0 until board.size.width).filter { it != board.size.width/2 && it != board.size.width/2 - 1 }.forEach {
-            board.pieces.add(ChessPiece(ChessPiece.Position(it, 0), ChessSide.WHITE))
-            board.pieces.add(ChessPiece(ChessPiece.Position(it, board.size.height - 1), ChessSide.BLACK))
+            val wPiece = ChessPiece(ChessPiece.Position(it, 0), ChessSide.WHITE)
+            board.pieces.add(wPiece)
+            GameDispatcher.fire("PIECE_ADDED", null, wPiece)
+
+            val bPiece = ChessPiece(ChessPiece.Position(it, board.size.height - 1), ChessSide.BLACK)
+            board.pieces.add(bPiece)
+            GameDispatcher.fire("PIECE_ADDED", null, bPiece)
         }
-        GameDispatcher.dispatch("PIECES_PLACED", null, board.pieces)
 
-        val oldTurn = turn
         turn = ChessSide.WHITE
-        GameDispatcher.dispatch("TURN_SWITCHED", oldTurn, turn)
-
         timer.restart()
     }
 
     private fun nextTurn() {
-        val oldValue = turn
-        turn = if (isTurnOf(ChessSide.WHITE)) ChessSide.BLACK else ChessSide.WHITE
-        GameDispatcher.dispatch("TURN_SWITCHED", oldValue, turn)
-
+        turn = if (turn == ChessSide.WHITE) ChessSide.BLACK else ChessSide.WHITE
         timer.restart()
     }
 
@@ -64,26 +67,27 @@ class GameMaster {
     }
 
     fun move(chessPiece: ChessPiece, position: ChessPiece.Position) : Boolean {
-        if (!hasWinner() && isTurnOf(chessPiece.chessSide)) {
+        if (!hasWinner() && turn == chessPiece.chessSide) {
             if (isValidMove(chessPiece, position)) {
                 var oldPos = chessPiece.position
                 board.move(
                         chessPiece, position,
                         {
-                            GameDispatcher.dispatch("PIECE_DIED", it, null)
+                            GameDispatcher.fire("PIECE_DIED", it, null)
                         },
                         { side, point ->
                             val oldValue = points[side]!!
                             points[side] = oldValue + point
-                            GameDispatcher.dispatch("${side.name}_POINT_CHANGED", oldValue, points[side])
+                            GameDispatcher.fire("${side.name}_POINT_CHANGED", oldValue, points[side])
                         },
                         {
-                            GameDispatcher.dispatch("PIECE_MOVED", oldPos, it.position)
+                            GameDispatcher.fire("PIECE_MOVED", oldPos, it.position)
                             oldPos = it.position
                         }
                 )
                 if (hasWinner()) {
-                    GameDispatcher.dispatch("WINNER", null, winner())
+                    GameDispatcher.fire("WINNER", null, winner())
+                    turn = null
                     timer.stop()
                 } else {
                     nextTurn()
@@ -95,10 +99,6 @@ class GameMaster {
         } else {
             return false
         }
-    }
-
-    fun isTurnOf(side: ChessSide): Boolean {
-       return side == turn
     }
 
     fun isValidMove(piece: ChessPiece, position: ChessPiece.Position) : Boolean {
