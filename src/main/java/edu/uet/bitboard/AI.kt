@@ -214,6 +214,7 @@ class AI(var WN: Long, var BN: Long, var wScore: Int, var bScore: Int, private v
         }
 
         val found = zobrist.checkPosition(WN, BN, whiteToMove)
+        val foundIndex = zobrist.resultArray.indexOf(found)
 
         found?.let {
             return found
@@ -263,7 +264,7 @@ class AI(var WN: Long, var BN: Long, var wScore: Int, var bScore: Int, private v
 
         val result = SearchResult(bestMove, bestScore)
 
-        zobrist.addPosition(WN, BN, whiteToMove, result)
+        zobrist.addPosition(WN, BN, whiteToMove, result, foundIndex)
 
         return result
     }

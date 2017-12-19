@@ -5,8 +5,11 @@ import java.security.SecureRandom
 class Zobrist() {
     var zArray = ArrayList<ArrayList<Long>>()
     var zBlackMove: Long
-    val hashArray = ArrayList<Long>()
+    private val hashArray = ArrayList<Long>()
     val resultArray = ArrayList<SearchResult>()
+    private val WNArray = ArrayList<Long>()
+    private val BNArray = ArrayList<Long>()
+    private val whiteToMoveArray = ArrayList<Boolean>()
 
     private fun random64(): Long {
         val random = SecureRandom()
@@ -50,16 +53,31 @@ class Zobrist() {
         val index = (0..(hashArray.size - 1))
                 .find { hash == hashArray[it] }
 
-        return if (index !== null) {
+        return if (index !== null
+                && whiteToMoveArray[index] == whiteToMove
+                && WNArray[index] == WN
+                && BNArray[index] == BN) {
             resultArray[index]
         } else {
-            return null
+            null
         }
     }
 
-    fun addPosition(WN: Long, BN: Long, whiteToMove: Boolean, result: SearchResult) {
+    fun addPosition(WN: Long, BN: Long, whiteToMove: Boolean, result: SearchResult, index: Int) {
         val hash = getZobristHash(WN, BN, whiteToMove)
-        hashArray.add(hash)
-        resultArray.add(result)
+
+        if (index != -1) {
+            hashArray[index] = hash
+            resultArray[index] = result
+            whiteToMoveArray[index] = whiteToMove
+            WNArray[index] = WN
+            BNArray[index] = BN
+        } else {
+            hashArray.add(hash)
+            resultArray.add(result)
+            whiteToMoveArray.add(whiteToMove)
+            WNArray.add(WN)
+            BNArray.add(BN)
+        }
     }
 }
