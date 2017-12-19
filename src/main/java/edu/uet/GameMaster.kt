@@ -3,63 +3,60 @@ package edu.uet
 import edu.uet.entity.ChessBoard
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessSide
-import java.beans.PropertyChangeEvent
-import java.beans.PropertyChangeSupport
+import edu.uet.utils.CountDownTimer
 
 /**
  * Created by tuantmtb on 10/31/17.
  */
 class GameMaster {
-    val board = ChessBoard(arrayListOf(
-            ChessPiece(ChessPiece.Position( 0, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 1, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 2, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 3, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 4, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 5, 0), ChessSide.WHITE),
-            ChessPiece(ChessPiece.Position( 0, 5), ChessSide.BLACK),
-            ChessPiece(ChessPiece.Position( 1, 5), ChessSide.BLACK),
-            ChessPiece(ChessPiece.Position( 2, 5), ChessSide.BLACK),
-            ChessPiece(ChessPiece.Position( 3, 5), ChessSide.BLACK),
-            ChessPiece(ChessPiece.Position( 4, 5), ChessSide.BLACK),
-            ChessPiece(ChessPiece.Position( 5, 5), ChessSide.BLACK)
-    ), ChessBoard.Size(6, 6))
-    private var turn : ChessSide = ChessSide.WHITE
+    val board = ChessBoard(arrayListOf(), ChessBoard.Size(ChessConfig.BOARD_WIDTH, ChessConfig.BOARD_HEIGHT))
+    private var turn : ChessSide? = null
     private val points = hashMapOf(
-            Pair(ChessSide.BLACK, 0),
-            Pair(ChessSide.WHITE, 0)
+            Pair<ChessSide, Int?>(ChessSide.BLACK, null),
+            Pair<ChessSide, Int?>(ChessSide.WHITE, null)
     )
-    private val pointThreshold = 10
-    private val propChangeSupport = PropertyChangeSupport(this)
+    private var timer = CountDownTimer(
+            onTick = { oldValue, newValue -> GameDispatcher.dispatch("COUNT_DOWN_TICK", oldValue, newValue) },
+            onTimeOut = { nextTurn() }
+    )
 
-    fun addPropertyChangeListener(propName: String, listener: (evt: PropertyChangeEvent) -> Unit) {
-        propChangeSupport.addPropertyChangeListener(propName, listener)
+    fun newGame() {
+        points.forEach { side, point ->
+            points[side] = 0
+            GameDispatcher.dispatch("${side.name}_POINT_CHANGED", point, points[side])
+        }
+
+        board.pieces.forEach { GameDispatcher.dispatch("PIECE_DIED", it, null)}
+        board.pieces.clear()
+        (0 until board.size.width).filter { it != board.size.width/2 && it != board.size.width/2 - 1 }.forEach {
+            board.pieces.add(ChessPiece(ChessPiece.Position(it, 0), ChessSide.WHITE))
+            board.pieces.add(ChessPiece(ChessPiece.Position(it, board.size.height - 1), ChessSide.BLACK))
+        }
+        GameDispatcher.dispatch("PIECES_PLACED", null, board.pieces)
+
+        val oldTurn = turn
+        turn = ChessSide.WHITE
+        GameDispatcher.dispatch("TURN_SWITCHED", oldTurn, turn)
+
+        timer.restart()
     }
 
     private fun nextTurn() {
         val oldValue = turn
         turn = if (isTurnOf(ChessSide.WHITE)) ChessSide.BLACK else ChessSide.WHITE
-        propChangeSupport.firePropertyChange("TURN_SWITCHED", oldValue, turn)
+        GameDispatcher.dispatch("TURN_SWITCHED", oldValue, turn)
+
+        timer.restart()
     }
 
-    private fun winner() : ChessSide? {
-        if (points[ChessSide.BLACK]!! >= pointThreshold) {
-            return ChessSide.BLACK
+    fun winner() : ChessSide? {
+        return when {
+            points[ChessSide.BLACK]!! >= ChessConfig.WIN_POINT -> ChessSide.BLACK
+            points[ChessSide.WHITE]!! >= ChessConfig.WIN_POINT -> ChessSide.WHITE
+            board.pieces.all { it.chessSide == ChessSide.WHITE } -> ChessSide.WHITE
+            board.pieces.all { it.chessSide == ChessSide.BLACK } -> ChessSide.BLACK
+            else -> null
         }
-
-        if (points[ChessSide.WHITE]!! >= pointThreshold) {
-            return ChessSide.WHITE
-        }
-
-        if (board.pieces.all { it.chessSide == ChessSide.WHITE }) {
-            return ChessSide.WHITE
-        }
-
-        if (board.pieces.all { it.chessSide == ChessSide.BLACK }) {
-            return ChessSide.BLACK
-        }
-
-        return null
     }
 
     fun hasWinner() : Boolean {
@@ -73,20 +70,21 @@ class GameMaster {
                 board.move(
                         chessPiece, position,
                         {
-                            propChangeSupport.firePropertyChange("PIECE_DIED", it, null)
+                            GameDispatcher.dispatch("PIECE_DIED", it, null)
                         },
                         { side, point ->
                             val oldValue = points[side]!!
                             points[side] = oldValue + point
-                            propChangeSupport.firePropertyChange("${side.name}_POINT_CHANGED", oldValue, points[side])
+                            GameDispatcher.dispatch("${side.name}_POINT_CHANGED", oldValue, points[side])
                         },
                         {
-                            propChangeSupport.firePropertyChange("PIECE_MOVED", oldPos, it.position)
+                            GameDispatcher.dispatch("PIECE_MOVED", oldPos, it.position)
                             oldPos = it.position
                         }
                 )
                 if (hasWinner()) {
-                    propChangeSupport.firePropertyChange("WINNER", null, winner())
+                    GameDispatcher.dispatch("WINNER", null, winner())
+                    timer.stop()
                 } else {
                     nextTurn()
                 }
