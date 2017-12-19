@@ -40,7 +40,7 @@ open class GameView(val pvc: Boolean) : BaseView() {
         hbox.children.add(0, boardUI)
 
         bind()
-        game.newGame(pvc)
+        game.newGame()
     }
 
     private fun bind() {
@@ -80,7 +80,7 @@ open class GameView(val pvc: Boolean) : BaseView() {
     }
 
     fun menuNewGame() {
-        game.newGame(pvc)
+        game.newGame()
     }
 
     fun menuClose() {

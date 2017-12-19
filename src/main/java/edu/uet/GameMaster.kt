@@ -1,6 +1,5 @@
 package edu.uet
 
-import edu.uet.entity.ChessAI
 import edu.uet.entity.ChessBoard
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessSide
@@ -16,9 +15,6 @@ class GameMaster {
             GameDispatcher.fire("TURN_SWITCHED", oldValue, newValue)
         }
 
-    var pvc: Boolean? = null
-    var ai: ChessAI? = null
-
     private val points = hashMapOf(
             Pair<ChessSide, Int?>(ChessSide.BLACK, null),
             Pair<ChessSide, Int?>(ChessSide.WHITE, null)
@@ -29,8 +25,7 @@ class GameMaster {
             onTimeOut = { nextTurn() }
     )
 
-    fun newGame(pvc: Boolean) {
-        this.pvc = pvc
+    fun newGame() {
         points.forEach { side, point ->
             points[side] = 0
             GameDispatcher.fire("${side.name}_POINT_CHANGED", point, points[side])
@@ -49,23 +44,12 @@ class GameMaster {
         }
 
         turn = ChessSide.WHITE
-        if (pvc) {
-            ai = ChessAI()
-        }
         timer.restart()
     }
 
     private fun nextTurn() {
         turn = if (turn == ChessSide.WHITE) ChessSide.BLACK else ChessSide.WHITE
         timer.restart()
-        if (pvc == true && turn == ai?.color) {
-            aiMove()
-        }
-    }
-
-    private fun aiMove() {
-        // TODO :))
-        // Cần xử cả trường hợp AI đoán quá thời gian
     }
 
     fun winner() : ChessSide? {
