@@ -9,7 +9,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button defaultButton="true" layoutX="122.0" layoutY="271.0" mnemonicParsing="false" onAction="#start" text="Bắt đầu" />
+      <Button layoutX="108.0" layoutY="271.0" mnemonicParsing="false" onAction="#pvc" text="Chơi với máy" />
       <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="75.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@BN.png" />
@@ -19,5 +19,6 @@
          <font>
             <Font name="System Bold" size="24.0" />
          </font></Label>
+      <Button layoutX="103.0" layoutY="307.0" mnemonicParsing="false" text="Chơi với người" onAction="#pvp" />
    </children>
 </Pane>

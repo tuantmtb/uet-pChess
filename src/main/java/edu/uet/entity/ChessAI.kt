@@ -1,7 +1,6 @@
 package edu.uet.entity
 
-class ChessAI {
-    var color = ChessSide.BLACK
+class ChessAI(val color: ChessSide = ChessSide.BLACK) {
     var gameSpaceDeep = 3
     val currentGameSpace: GameSpace? = null
 

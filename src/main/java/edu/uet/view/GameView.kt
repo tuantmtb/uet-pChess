@@ -14,8 +14,8 @@ import tornadofx.hide
 import tornadofx.information
 import tornadofx.show
 
-class GameView : BaseView() {
-    override val root: BorderPane by fxml("/Game.fxml")
+open class GameView(val pvc: Boolean) : BaseView() {
+    final override val root: BorderPane by fxml("/Game.fxml")
 
     private var game = GameMaster()
 
@@ -40,7 +40,7 @@ class GameView : BaseView() {
         hbox.children.add(0, boardUI)
 
         bind()
-        game.newGame()
+        game.newGame(pvc)
     }
 
     private fun bind() {
@@ -80,7 +80,7 @@ class GameView : BaseView() {
     }
 
     fun menuNewGame() {
-        game.newGame()
+        game.newGame(pvc)
     }
 
     fun menuClose() {
