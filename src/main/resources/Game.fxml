@@ -168,7 +168,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="Game">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#menuNewGame" text="New game">
+                  <MenuItem mnemonicParsing="false" onAction="#newGame" text="New game">
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="N" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>

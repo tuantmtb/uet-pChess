@@ -28,7 +28,7 @@ class ChessBoardUI(private val game: GameMaster): GridPane() {
         (0 until game.board.size.height).forEach { row ->
             rowConstraints.add(ChessRowConstraints())
             (0 until game.board.size.width).forEach { col ->
-                val posUI = ChessPositionUI(row, col, game.board.size)
+                val posUI = ChessPositionUI(row, col, game)
                 posUI.setOnDragOver { onPositionUIDragOver(it) }
                 posUI.setOnDragDone { onChessPieceUIDragDone(it) }
                 add(posUI, col, row)
@@ -48,7 +48,7 @@ class ChessBoardUI(private val game: GameMaster): GridPane() {
         GameDispatcher.on("PIECE_ADDED", {
             val piece = it.newValue as ChessPiece
 
-            val pieceUI = ChessPieceUI(piece)
+            val pieceUI = ChessPieceUI(piece, game)
             pieceUI.setOnDragDetected { onChessPieceUIDragDetected(it) }
 
             val posUI = findChessPositionUI(piece.position)
@@ -93,7 +93,7 @@ class ChessBoardUI(private val game: GameMaster): GridPane() {
     private fun onChessPieceUIDragDetected(event: MouseEvent) {
         val pieceUI = event.target as ChessPieceUI
         val piece = pieceUI.userData
-        if (!game.hasWinner() && game.turn == piece.chessSide) {
+        if (!game.hasWinner() && game.turn == piece.chessSide && !(game.pvc && game.turn == game.ai!!.color)) {
             // put image to drag board
             val db = pieceUI.startDragAndDrop(TransferMode.MOVE)
             val content = ClipboardContent()

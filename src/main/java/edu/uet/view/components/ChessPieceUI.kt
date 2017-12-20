@@ -1,6 +1,7 @@
 package edu.uet.view.components
 
 import edu.uet.GameDispatcher
+import edu.uet.GameMaster
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessSide
 import edu.uet.view.Styles
@@ -8,7 +9,7 @@ import javafx.scene.Cursor
 import javafx.scene.image.ImageView
 import java.beans.PropertyChangeEvent
 
-open class ChessPieceUI(piece: ChessPiece): ImageView(if (piece.chessSide == ChessSide.BLACK) "BN.png" else "WN.png") {
+class ChessPieceUI(piece: ChessPiece, val game: GameMaster): ImageView(if (piece.chessSide == ChessSide.BLACK) "BN.png" else "WN.png") {
     private var listener: ((PropertyChangeEvent) -> Unit)? = null
 
     init {
@@ -24,7 +25,7 @@ open class ChessPieceUI(piece: ChessPiece): ImageView(if (piece.chessSide == Che
 
     private fun bind() {
         listener = GameDispatcher.on("TURN_SWITCHED", {
-            cursor = if (it.newValue == userData.chessSide) Cursor.OPEN_HAND else Cursor.DEFAULT
+            cursor = if (it.newValue == userData.chessSide && !(game.pvc && game.ai!!.color == userData.chessSide)) Cursor.OPEN_HAND else Cursor.DEFAULT
         })
     }
 
