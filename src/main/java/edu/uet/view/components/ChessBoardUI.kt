@@ -4,6 +4,7 @@ import edu.uet.GameDispatcher
 import edu.uet.GameMaster
 import edu.uet.entity.ChessPiece
 import edu.uet.view.Styles
+import javafx.application.Platform
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.DragEvent
 import javafx.scene.input.MouseEvent
@@ -12,10 +13,10 @@ import javafx.scene.layout.ColumnConstraints
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.RowConstraints
 
-class ChessBoardUI(private val game: GameMaster): GridPane() {
-    class ChessColumnConstraints: ColumnConstraints(Styles.GRID_SIZE)
+class ChessBoardUI(private val game: GameMaster) : GridPane() {
+    class ChessColumnConstraints : ColumnConstraints(Styles.GRID_SIZE)
 
-    class ChessRowConstraints: RowConstraints(Styles.GRID_SIZE)
+    class ChessRowConstraints : RowConstraints(Styles.GRID_SIZE)
 
     init {
         prefWidth = Styles.GRID_SIZE * game.board.size.width
@@ -42,7 +43,10 @@ class ChessBoardUI(private val game: GameMaster): GridPane() {
         GameDispatcher.on("PIECE_MOVED", {
             val oldPosUI = findChessPositionUI(it.oldValue as ChessPiece.Position)
             val newPosUI = findChessPositionUI(it.newValue as ChessPiece.Position)
-            oldPosUI.movePieceTo(newPosUI)
+            Platform.runLater {
+
+                oldPosUI.movePieceTo(newPosUI)
+            }
         })
 
         GameDispatcher.on("PIECE_ADDED", {
