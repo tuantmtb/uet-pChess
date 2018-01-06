@@ -37,6 +37,7 @@ object Rating {
         }
 
 
+//        return evaluateByPositions(WN, BN) + (wScore - bScore) * 60
         return evaluateByPositions(WN, BN) + (wScore - bScore) * 60
     }
 
