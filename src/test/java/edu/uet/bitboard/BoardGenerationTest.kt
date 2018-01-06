@@ -23,4 +23,13 @@ class BoardGenerationTest {
 
         println(BoardGeneration.arrayToBitBoards(chessBoard).WN)
     }
+
+    @Test
+    fun sample() {
+        val i = 8
+        var binary = "0000000000000000000000000000000000000000000000000000000000000000"
+        binary = binary.substring(i + 1) + "1" + binary.substring(0, i)
+
+        print(binary)
+    }
 }

@@ -9,7 +9,7 @@ import java.util.*
 
 class ChessAI(val color: ChessSide = ChessSide.BLACK) {
     var gameSpaceDeep = 3
-    val currentGameSpace: GameSpace? = null
+
 
     /**
      * don't call callback if canceled
