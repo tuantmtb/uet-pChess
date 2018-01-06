@@ -5,7 +5,6 @@ import edu.uet.entity.ChessBoard
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessSide
 import edu.uet.utils.CountDownTimer
-import tornadofx.*
 
 class GameMaster {
     val board = ChessBoard(arrayListOf(), ChessBoard.Size(ChessConfig.BOARD_WIDTH, ChessConfig.BOARD_HEIGHT))
