@@ -2,7 +2,6 @@ package edu.uet.entity
 
 import edu.uet.ChessConfig
 import edu.uet.bitboard.AI
-import edu.uet.bitboard.BitBoardPair
 import edu.uet.bitboard.Rating
 import edu.uet.bitboard.Zobrist
 import edu.uet.transform.TranformBitboardAndView
