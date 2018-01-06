@@ -8,13 +8,13 @@ object Rating {
             arrayOf(5, 5, 15, 20, 20, 15, 5, 5),
             arrayOf(5, 5, 15, 20, 20, 15, 5, 5),
             arrayOf(5, 5, 10, 15, 15, 10, 5, 5),
-            arrayOf(5, 5, 10, 10, 10, 10, 5, 5),
+            arrayOf(5, 5, 30, 50, 50, 30, 5, 5),
             arrayOf(5, 5, 5, 2, 2, 5, 5, 5)
     )
 
     private val BNBoard = arrayOf(
             arrayOf(5, 5, 5, 2, 2, 5, 5, 5),
-            arrayOf(5, 5, 10, 10, 10, 10, 5, 5),
+            arrayOf(5, 5, 30, 50, 50, 30, 5, 5),
             arrayOf(5, 5, 10, 15, 15, 10, 5, 5),
             arrayOf(5, 5, 15, 20, 20, 15, 5, 5),
             arrayOf(5, 5, 15, 20, 20, 15, 5, 5),
