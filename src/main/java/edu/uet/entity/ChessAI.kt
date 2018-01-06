@@ -1,9 +1,11 @@
 package edu.uet.entity
 
 import edu.uet.bitboard.AI
+import edu.uet.bitboard.BitBoardPair
 import edu.uet.bitboard.Rating
 import edu.uet.bitboard.Zobrist
 import edu.uet.transform.TranformBitboardAndView
+import java.util.*
 
 class ChessAI(val color: ChessSide = ChessSide.BLACK) {
     var gameSpaceDeep = 3
@@ -20,7 +22,7 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
         println("getNextMoveForChessBoard")
 
         val bitBoardPair = TranformBitboardAndView().viewModelToAIModel(chessBoard)
-
+        drawArray(bitBoardPair)
         val ai = AI(Zobrist())
         val startTime = System.currentTimeMillis()
         val move = ai.findNextMove(5, bitBoardPair.WN, bitBoardPair.BN, false, 0, 0)
@@ -52,6 +54,35 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
 
         for (i in 0..(moves.length / 4 - 1)) {
             println("(" + moves[4 * i] + "," + moves[4 * i + 1] + ") -> (" + moves[4 * i + 2] + "," + moves[4 * i + 3] + ")")
+        }
+    }
+
+    fun drawArray(bitBoardPair: BitBoardPair) {
+        val chessBoard = arrayOf(
+                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
+                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
+                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
+                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
+                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
+                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
+                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
+                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "))
+
+        val WN = bitBoardPair.WN
+        val BN = bitBoardPair.BN
+
+        for (i in 0..63) {
+
+            if (WN shr i and 1 == 1L) {
+                chessBoard[i / 8][i % 8] = "N"
+            }
+
+            if (BN shr i and 1 == 1L) {
+                chessBoard[i / 8][i % 8] = "n"
+            }
+        }
+        for (i in 0..7) {
+            println(Arrays.toString(chessBoard[i]))
         }
     }
 }
