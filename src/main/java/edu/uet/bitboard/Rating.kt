@@ -23,7 +23,20 @@ object Rating {
             arrayOf(5, 5, 5, -1, -1, 5, 5, 5)
     )
 
-    fun evaluate(WN: Long, BN: Long, wScore: Int, bScore: Int): Int {
+    fun evaluate(WN: Long, BN: Long, wScore: Int, bScore: Int, winPoint: Int = -1): Int {
+
+        if (winPoint > -1) {
+
+            if (wScore == winPoint) {
+                return 5000
+            }
+
+            if (bScore == winPoint) {
+                return -5000
+            }
+        }
+
+
         return evaluateByPositions(WN, BN) + (wScore - bScore) * 60
     }
 

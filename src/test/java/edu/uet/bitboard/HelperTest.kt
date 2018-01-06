@@ -6,7 +6,7 @@ class HelperTest {
 
     @Test
     fun testDrawBitboard() {
-        Helper.drawBitboard(10L)
+        Helper.drawBitboard(576460752303423488L)
     }
 
 }

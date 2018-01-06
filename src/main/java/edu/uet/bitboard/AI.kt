@@ -54,19 +54,32 @@ class AI(val zobrist: Zobrist) {
         return MoveResult(WNt, BNt, newWScore, newBScore)
     }
 
-    fun findNextMove(searchDepth: Int, WN: Long, BN: Long, whiteToMove: Boolean, wScore: Int, bScore: Int): String {
+    fun findNextMove(searchDepth: Int, WN: Long, BN: Long, whiteToMove: Boolean, wScore: Int, bScore: Int, winPoint: Int = -1): String {
         this.searchDepth = searchDepth
-        val result = alphaBetaSearch(-1000, 1000, WN, BN, whiteToMove, 0, wScore, bScore)
+        val result = alphaBetaSearch(-1000, 1000, WN, BN, whiteToMove, 0, wScore, bScore, winPoint)
+
+        println("Score: " + result.score)
+
         return result.move
     }
 
-    fun alphaBetaSearch(alpha: Int, beta: Int, WN: Long, BN: Long, whiteToMove: Boolean, depth: Int, wScore: Int, bScore: Int): SearchResult {
+    fun alphaBetaSearch(alpha: Int, beta: Int, WN: Long, BN: Long, whiteToMove: Boolean, depth: Int, wScore: Int, bScore: Int, winPoint: Int = -1): SearchResult {
         var bestScore = Int.MIN_VALUE
         var tAlpha = alpha
 
 
+        if (winPoint > -1) {
+            if (whiteToMove && bScore == winPoint) {
+                return SearchResult("", -MATE_SCORE)
+            }
+
+            if (!whiteToMove && wScore == winPoint) {
+                return SearchResult("", -MATE_SCORE)
+            }
+        }
+
         if (depth == searchDepth) {
-            val evaluated = Rating.evaluate(WN, BN, wScore, bScore)
+            val evaluated = Rating.evaluate(WN, BN, wScore, bScore, winPoint)
 
             bestScore = if (whiteToMove) {
                 evaluated
@@ -93,7 +106,7 @@ class AI(val zobrist: Zobrist) {
             Moves.possibleMovesB(WN, BN)
         }
 
-        moves = sortMoves(moves, whiteToMove, WN, BN, wScore, bScore)
+        moves = sortMoves(moves, whiteToMove, WN, BN, wScore, bScore, winPoint)
 
         if (moves.isEmpty()) {
 //            return if (whiteToMove) {
@@ -111,7 +124,7 @@ class AI(val zobrist: Zobrist) {
         while (i < moves.length) {
             val move = moves.substring(i, i + 4)
             val moveResult = makeMove(move, whiteToMove, WN, BN, wScore, bScore)
-            val searchResult = alphaBetaSearch(-beta, -tAlpha, moveResult.WN, moveResult.BN, !whiteToMove, depth + 1, moveResult.wScore, moveResult.bScore)
+            val searchResult = alphaBetaSearch(-beta, -tAlpha, moveResult.WN, moveResult.BN, !whiteToMove, depth + 1, moveResult.wScore, moveResult.bScore, winPoint)
 
             val score = -searchResult.score
 
@@ -136,7 +149,7 @@ class AI(val zobrist: Zobrist) {
         return result
     }
 
-    private fun sortMoves(moves: String, whiteToMove: Boolean, WN: Long, BN: Long, wScore: Int, bScore: Int): String {
+    private fun sortMoves(moves: String, whiteToMove: Boolean, WN: Long, BN: Long, wScore: Int, bScore: Int, winPoint:Int = -1): String {
 
         if (moves.isEmpty()) {
             return moves
@@ -152,7 +165,7 @@ class AI(val zobrist: Zobrist) {
 
             val moveResult = makeMove(move, whiteToMove, WN, BN, wScore, bScore)
 
-            val evaluated = Rating.evaluate(moveResult.WN, moveResult.BN, moveResult.wScore, moveResult.bScore)
+            val evaluated = Rating.evaluate(moveResult.WN, moveResult.BN, moveResult.wScore, moveResult.bScore, winPoint)
 
             val score = if (whiteToMove) {
                 evaluated
