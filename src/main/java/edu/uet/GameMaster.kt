@@ -5,6 +5,7 @@ import edu.uet.entity.ChessBoard
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessSide
 import edu.uet.utils.CountDownTimer
+import tornadofx.*
 
 class GameMaster {
     val board = ChessBoard(arrayListOf(), ChessBoard.Size(ChessConfig.BOARD_WIDTH, ChessConfig.BOARD_HEIGHT))
@@ -61,8 +62,8 @@ class GameMaster {
 
         turn = if (turn == ChessSide.WHITE) ChessSide.BLACK else ChessSide.WHITE
         timer.restart()
-        if (pvc) {
-            ai?.getNextMoveForChessBoard(board, {chessPiece, position ->
+        if (pvc && turn == ChessSide.BLACK) {
+            ai?.getNextMoveForChessBoard(board, points, {chessPiece, position ->
                 move(chessPiece, position)
             })
         }
