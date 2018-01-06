@@ -61,6 +61,7 @@ object Helper {
     }
 
     fun printMoves(moves: String) {
+
         for (i in 0..(moves.length / 4 - 1)) {
             println("(" + moves[4 * i] + "," + moves[4 * i + 1] + ") -> (" + moves[4 * i + 2] + "," + moves[4 * i + 3] + ")")
         }

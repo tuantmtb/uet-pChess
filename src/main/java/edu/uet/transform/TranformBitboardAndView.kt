@@ -11,8 +11,14 @@ import edu.uet.entity.ChessSide
  */
 class TranformBitboardAndView {
 
-    fun main(args: Array<String>) {
-        println("Hello, world!")
+    fun aiModelToViewModel(bitBoardPair: BitBoardPair): ChessBoard {
+        val array = aiModelToArray(bitBoardPair)
+        return arrayToViewModel(array)
+    }
+
+    fun viewModelToAIModel(chessBoard: ChessBoard): BitBoardPair {
+        val array = viewModelToArray(chessBoard)
+        return arrayToAIModel(array)
     }
 
     fun arrayToViewModel(array: Array<Array<String>>): ChessBoard {
@@ -81,13 +87,5 @@ class TranformBitboardAndView {
         return bitBoardPair
     }
 
-    fun aiModelToViewModel(bitBoardPair: BitBoardPair): ChessBoard {
-        val array = aiModelToArray(bitBoardPair)
-        return arrayToViewModel(array)
-    }
 
-    fun viewModelToAIModel(chessBoard: ChessBoard): BitBoardPair {
-        val array = viewModelToArray(chessBoard)
-        return arrayToAIModel(array)
-    }
 }

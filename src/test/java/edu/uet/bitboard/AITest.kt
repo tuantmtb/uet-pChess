@@ -1,7 +1,6 @@
 package edu.uet.bitboard
 
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class AITest {
     @Test
@@ -75,4 +74,5 @@ class AITest {
 
 //        assertEquals(3, result.wScore)
     }
+
 }
