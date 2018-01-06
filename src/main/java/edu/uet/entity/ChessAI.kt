@@ -13,7 +13,6 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
 //        val gameSpaceRoot = GameSpaceNode(chessBoard)
 //        val currentGameSpace = GameSpace(gameSpaceRoot)
         println("getNextMoveForChessBoard")
-        var sizePiece = chessBoard.pieces.filter { it.chessSide == ChessSide.BLACK }.size
 
         var piece = chessBoard.pieces.filter { it.chessSide == ChessSide.BLACK }.first()
         var position = chessBoard.getPossibleNextPositionForPiece(piece)[0]
