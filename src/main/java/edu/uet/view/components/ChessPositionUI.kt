@@ -7,6 +7,7 @@ import edu.uet.entity.ChessBoard
 import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessSide
 import edu.uet.view.Styles
+import javafx.application.Platform
 import javafx.scene.image.ImageView
 import javafx.scene.layout.AnchorPane
 import tornadofx.add
@@ -45,8 +46,10 @@ class ChessPositionUI(row: Int, col: Int, game: GameMaster): AnchorPane() {
         }
 
         GameDispatcher.on("PIECE_DIED", {
-            if (pieceUI?.userData == it.oldValue) {
-                removePiece()
+            Platform.runLater {
+                if (pieceUI?.userData == it.oldValue) {
+                    removePiece()
+                }
             }
         })
     }
