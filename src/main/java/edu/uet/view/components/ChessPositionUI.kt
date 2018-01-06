@@ -33,7 +33,8 @@ class ChessPositionUI(row: Int, col: Int, game: GameMaster): AnchorPane() {
     init {
         prefHeight = Styles.GRID_SIZE
         prefWidth = Styles.GRID_SIZE
-        userData = ChessPiece.Position(game.board.size.width - 1 - col, game.board.size.height - 1 - row)
+//        userData = ChessPiece.Position(game.board.size.width - 1 - col, game.board.size.height - 1 - row)
+        userData = ChessPiece.Position(col, game.board.size.height - 1 - row)
         val color = if ((row + col) % 2 == 0) Styles.THEME.BACKGROUND_DARK_COLOR else Styles.THEME.BACKGROUND_LIGHT_COLOR
         style = "-fx-background-color: $color;"
 
