@@ -37,16 +37,19 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
 
         val ai = AI(Zobrist())
         val startTime = System.currentTimeMillis()
-        val move = ai.findNextMove(4, bitBoardPair.WN, bitBoardPair.BN, false, 0, 0)
+        val deepSearch = getDeepSearch(chessBoard.pieces.size, points.get(ChessSide.WHITE)!!, points.get(ChessSide.BLACK)!!)
+        val move = ai.findNextMove(deepSearch, bitBoardPair.WN, bitBoardPair.BN, false, points.get(ChessSide.WHITE)!!, points.get(ChessSide.BLACK)!!)
         val endTime = System.currentTimeMillis()
 
-        val moveResult = ai.makeMove(move, true, bitBoardPair.WN, bitBoardPair.BN, 0, 0)
+        val moveResult = ai.makeMove(move, true, bitBoardPair.WN, bitBoardPair.BN, points.get(ChessSide.WHITE)!!,
+                points
+                        .get(ChessSide.BLACK)!!)
         println(Rating.evaluate(moveResult.WN, 0L, 0, 0))
 
 //        var piece = chessBoardRotated.pieces.filter { it.chessSide == ChessSide.BLACK }.first()
         printMoves(move)
         val piece = chessBoard.pieces.filter {
-//            it.position.x == move[0].toString().toInt() && it.position.y == move[1].toString().toInt()
+            //            it.position.x == move[0].toString().toInt() && it.position.y == move[1].toString().toInt()
             it.position.x == move[1].toString().toInt() && it.position.y == 7 - move[0].toString().toInt()
         }.first()
 
@@ -54,6 +57,17 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
         val position = ChessPiece.Position(move[3].toString().toInt(), 7 - move[2].toString().toInt())
         callback(piece, position)
         println("piece moved")
+    }
+
+    fun getDeepSearch(pieceSize: Int, pointOfWhite: Int, pointOfBlack: Int): Int {
+        if (pieceSize > 10) return 5
+        if (pieceSize > 8) return 6
+        if (pieceSize > 6) return 7
+        if (pieceSize > 5) return 8
+        if (pieceSize > 4) return 9
+        if (pieceSize > 3) return 9
+        if (pieceSize > 2) return 10
+        return 4
     }
 
 
