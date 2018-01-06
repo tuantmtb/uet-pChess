@@ -48,7 +48,7 @@ open class GameView(val pvc: Boolean) : BaseView() {
         GameDispatcher.on("BLACK_POINT_CHANGED", { Platform.runLater { bPoint.text = it.newValue.toString() } })
         GameDispatcher.on("TURN_SWITCHED", { Platform.runLater { updateTurn() } })
         GameDispatcher.on("WINNER", {
-            information("Người chiến thắng: " + game.winner()!!.name)
+            Platform.runLater { information("Người chiến thắng: " + game.winner()!!.name) }
         })
         GameDispatcher.on("COUNT_DOWN_TICK", {
             Platform.runLater {
