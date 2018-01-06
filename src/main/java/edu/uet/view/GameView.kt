@@ -44,9 +44,9 @@ open class GameView(val pvc: Boolean) : BaseView() {
     }
 
     private fun bind() {
-        GameDispatcher.on("WHITE_POINT_CHANGED", { wPoint.text = it.newValue.toString() })
-        GameDispatcher.on("BLACK_POINT_CHANGED", { bPoint.text = it.newValue.toString() })
-        GameDispatcher.on("TURN_SWITCHED", { updateTurn() })
+        GameDispatcher.on("WHITE_POINT_CHANGED", { Platform.runLater { wPoint.text = it.newValue.toString() } })
+        GameDispatcher.on("BLACK_POINT_CHANGED", { Platform.runLater { bPoint.text = it.newValue.toString() } })
+        GameDispatcher.on("TURN_SWITCHED", { Platform.runLater { updateTurn() } })
         GameDispatcher.on("WINNER", {
             information("Người chiến thắng: " + game.winner()!!.name)
         })

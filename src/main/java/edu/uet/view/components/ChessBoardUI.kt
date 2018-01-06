@@ -41,10 +41,9 @@ class ChessBoardUI(private val game: GameMaster) : GridPane() {
 
     private fun bind() {
         GameDispatcher.on("PIECE_MOVED", {
-            val oldPosUI = findChessPositionUI(it.oldValue as ChessPiece.Position)
-            val newPosUI = findChessPositionUI(it.newValue as ChessPiece.Position)
             Platform.runLater {
-
+                val oldPosUI = findChessPositionUI(it.oldValue as ChessPiece.Position)
+                val newPosUI = findChessPositionUI(it.newValue as ChessPiece.Position)
                 oldPosUI.movePieceTo(newPosUI)
             }
         })
