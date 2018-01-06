@@ -32,12 +32,12 @@ class AITest {
 
         val ai = AI(Zobrist())
         val startTime = System.currentTimeMillis()
-        val result = ai.findNextMove(7, chessBoard.WN, chessBoard.BN, false, 0, 0)
+        val move = ai.findNextMove(7, chessBoard.WN, chessBoard.BN, false, 0, 0)
 
         val endTime = System.currentTimeMillis()
 
 
-        val moveResult = ai.makeMove(result.move, true, chessBoard.WN, chessBoard.BN, 0, 0)
+        val moveResult = ai.makeMove(move, true, chessBoard.WN, chessBoard.BN, 0, 0)
 
         Helper.drawBitboard(moveResult.WN)
         println()
@@ -47,8 +47,7 @@ class AITest {
 
 
         print("=> ")
-        Helper.printMoves(result.move)
-        println(result.score)
+        Helper.printMoves(move)
         println("That took " + (endTime - startTime) + " milliseconds")
     }
 

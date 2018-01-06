@@ -54,10 +54,10 @@ class AI(val zobrist: Zobrist) {
         return MoveResult(WNt, BNt, newWScore, newBScore)
     }
 
-    fun findNextMove(searchDepth: Int, WN: Long, BN: Long, whiteToMove: Boolean, wScore: Int, bScore: Int): SearchResult {
+    fun findNextMove(searchDepth: Int, WN: Long, BN: Long, whiteToMove: Boolean, wScore: Int, bScore: Int): String {
         this.searchDepth = searchDepth
-
-        return alphaBetaSearch(-1000, 1000, WN, BN, whiteToMove, 0, wScore, bScore)
+        val result = alphaBetaSearch(-1000, 1000, WN, BN, whiteToMove, 0, wScore, bScore)
+        return result.move
     }
 
     fun alphaBetaSearch(alpha: Int, beta: Int, WN: Long, BN: Long, whiteToMove: Boolean, depth: Int, wScore: Int, bScore: Int): SearchResult {
