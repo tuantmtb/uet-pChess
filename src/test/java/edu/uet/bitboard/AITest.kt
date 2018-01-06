@@ -19,9 +19,9 @@ class AITest {
         val array = arrayOf(
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
-                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
+                arrayOf(" ", " ", "n", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", "N", " ", " ", " "),
-                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
+                arrayOf(" ", " ", " ", " ", " ", " ", "n", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf("N", "N", " ", " ", " ", "N", "N", "N"))
@@ -30,9 +30,10 @@ class AITest {
 
         //  val chessBoard = BoardGeneration.initiateStandardBoard()
 
-        val ai = AI(chessBoard.WN, chessBoard.BN, 0, 0, 4, Zobrist())
+        val ai = AI(Zobrist())
         val startTime = System.currentTimeMillis()
-        val result = ai.alphaBetaSearch(-1000, 1000, chessBoard.WN, chessBoard.BN, true, 0, 0, 0)
+        val result = ai.findNextMove(7, chessBoard.WN, chessBoard.BN, false, 0, 0)
+
         val endTime = System.currentTimeMillis()
 
 
@@ -65,7 +66,7 @@ class AITest {
 
         val chessBoard = BoardGeneration.arrayToBitBoards(array)
 
-        val ai = AI(chessBoard.WN, chessBoard.BN, 0, 0, 4, Zobrist())
+        val ai = AI(Zobrist())
 
         val result = ai.makeMove("2203", true, chessBoard.WN, chessBoard.BN, 0, 0)
 
