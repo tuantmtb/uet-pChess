@@ -64,9 +64,9 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
         if (pieceSize > 8) return 6
         if (pieceSize > 6) return 7
         if (pieceSize > 5) return 8
-        if (pieceSize > 4) return 9
+        if (pieceSize > 4) return 8
         if (pieceSize > 3) return 9
-        if (pieceSize > 2) return 10
+        if (pieceSize > 2) return 9
         return 4
     }
 
