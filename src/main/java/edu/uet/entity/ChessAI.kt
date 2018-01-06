@@ -1,5 +1,6 @@
 package edu.uet.entity
 
+import edu.uet.ChessConfig
 import edu.uet.bitboard.AI
 import edu.uet.bitboard.BitBoardPair
 import edu.uet.bitboard.Rating
@@ -38,7 +39,7 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
         val ai = AI(Zobrist())
         val startTime = System.currentTimeMillis()
         val deepSearch = getDeepSearch(chessBoard.pieces.size, points.get(ChessSide.WHITE)!!, points.get(ChessSide.BLACK)!!)
-        val move = ai.findNextMove(deepSearch, bitBoardPair.WN, bitBoardPair.BN, false, points.get(ChessSide.WHITE)!!, points.get(ChessSide.BLACK)!!)
+        val move = ai.findNextMove(deepSearch, bitBoardPair.WN, bitBoardPair.BN, false, points.get(ChessSide.WHITE)!!, points.get(ChessSide.BLACK)!!, ChessConfig.WIN_POINT)
         val endTime = System.currentTimeMillis()
 
         val moveResult = ai.makeMove(move, true, bitBoardPair.WN, bitBoardPair.BN, points.get(ChessSide.WHITE)!!,
