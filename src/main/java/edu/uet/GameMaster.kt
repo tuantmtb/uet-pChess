@@ -61,8 +61,8 @@ class GameMaster {
 
         turn = if (turn == ChessSide.WHITE) ChessSide.BLACK else ChessSide.WHITE
         timer.restart()
-        if (pvc) {
-            ai?.getNextMoveForChessBoard(board, {chessPiece, position ->
+        if (pvc && turn == ChessSide.BLACK) {
+            ai?.getNextMoveForChessBoard(board, points, {chessPiece, position ->
                 move(chessPiece, position)
             })
         }

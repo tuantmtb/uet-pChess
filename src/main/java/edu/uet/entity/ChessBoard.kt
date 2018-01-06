@@ -90,10 +90,15 @@ class ChessBoard(var pieces: ArrayList<ChessPiece>, val size: Size = Size(ChessC
                 // Teleport
                 piece.moveTo(newPosition)
                 onPieceMoves?.invoke(piece)
-            } else if (pieceAtNewPosition.chessSide != piece.chessSide) {
-                // Eat an enemy
+            } else {
+                // Eat piece
                 onPieceDies?.invoke(pieceAtNewPosition)
-                onPointsGivenForSide?.invoke(piece.chessSide, ChessConfig.POINTS_FOR_EATING_AN_PIECE)
+
+                // Eaten piece is an enemy
+                if (pieceAtNewPosition.chessSide != piece.chessSide) {
+                    onPointsGivenForSide?.invoke(piece.chessSide, ChessConfig.POINTS_FOR_EATING_AN_PIECE)
+                }
+
                 pieces.remove(pieceAtNewPosition)
                 piece.moveTo(newPosition)
                 onPieceMoves?.invoke(piece)

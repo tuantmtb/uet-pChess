@@ -6,6 +6,7 @@ import edu.uet.bitboard.Rating
 import edu.uet.bitboard.Zobrist
 import edu.uet.transform.TranformBitboardAndView
 import java.util.*
+import kotlin.collections.HashMap
 
 class ChessAI(val color: ChessSide = ChessSide.BLACK) {
     var gameSpaceDeep = 3
@@ -14,7 +15,7 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
     /**
      * don't call callback if canceled
      */
-    fun getNextMoveForChessBoard(chessBoard: ChessBoard, callback: ((ChessPiece, ChessPiece.Position) -> Unit)) {
+    fun getNextMoveForChessBoard(chessBoard: ChessBoard, points: HashMap<ChessSide, Int?>, callback: ((ChessPiece, ChessPiece.Position) -> Unit)) {
 
 //        // create game space
 //        val gameSpaceRoot = GameSpaceNode(chessBoard)
