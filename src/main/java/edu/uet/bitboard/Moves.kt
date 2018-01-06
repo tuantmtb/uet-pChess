@@ -1,7 +1,5 @@
 package edu.uet.bitboard
 
-import javax.xml.stream.events.Characters
-
 object Moves {
     private val FILE_AB = 217020518514230019L
     private val FILE_GH = -4557430888798830400L
@@ -10,10 +8,10 @@ object Moves {
     private var BLACK_PIECES = 0L
     private var NOT_BLACK_PIECES = 0L
     private var WHITE_PIECES = 0L
-    private val BLOCK_TOP_ENEMY = 1024L
-    private val BLOCK_BOTTOM_ENEMY = 67108864L
-    private val BLOCK_RIGHT_ENEMY = 524288L
-    private val BLOCK_LEFT_ENEMY = 131072L
+    private val BLOCK_TOP_PIECE = 1024L
+    private val BLOCK_BOTTOM_PIECE = 67108864L
+    private val BLOCK_RIGHT_PIECE = 524288L
+    private val BLOCK_LEFT_PIECE = 131072L
     private val BLOCKED_TOP = 10L
     private val BLOCKED_RIGHT = 268439552L
     private val BLOCKED_LEFT = 16777472L
@@ -111,6 +109,7 @@ object Moves {
     }
 
     private fun possibleN(inputBitboard: Long, enemies: Long, notOurPieces: Long): String {
+        val allPieces = BLACK_PIECES or WHITE_PIECES
         var bitboard = inputBitboard
         var list = ""
         var i = bitboard and (bitboard - 1).inv()
@@ -129,19 +128,19 @@ object Moves {
 
                 possibility = KNIGHT_SPAN shl shiftAmount
 
-                if ((enemies and (BLOCK_TOP_ENEMY shl shiftAmount)) != 0L) {
+                if ((allPieces and (BLOCK_TOP_PIECE shl shiftAmount)) != 0L) {
                     blockedTop = BLOCKED_TOP shl shiftAmount
                 }
 
-                if ((enemies and (BLOCK_RIGHT_ENEMY shl shiftAmount)) != 0L) {
+                if ((allPieces and (BLOCK_RIGHT_PIECE shl shiftAmount)) != 0L) {
                     blockedRight = BLOCKED_RIGHT shl shiftAmount
                 }
 
-                if ((enemies and (BLOCK_BOTTOM_ENEMY shl shiftAmount)) != 0L) {
+                if ((allPieces and (BLOCK_BOTTOM_PIECE shl shiftAmount)) != 0L) {
                     blockedBottom = BLOCKED_BOTTOM shl shiftAmount
                 }
 
-                if ((enemies and (BLOCK_LEFT_ENEMY shl shiftAmount)) != 0L) {
+                if ((allPieces and (BLOCK_LEFT_PIECE shl shiftAmount)) != 0L) {
                     blockedLeft = BLOCKED_LEFT shl shiftAmount
                 }
 
@@ -151,19 +150,19 @@ object Moves {
 
                 possibility = KNIGHT_SPAN shr shiftAmount
 
-                if ((enemies and (BLOCK_TOP_ENEMY shr shiftAmount)) != 0L) {
+                if ((allPieces and (BLOCK_TOP_PIECE shr shiftAmount)) != 0L) {
                     blockedTop = BLOCKED_TOP shr shiftAmount
                 }
 
-                if ((enemies and (BLOCK_RIGHT_ENEMY shr shiftAmount)) != 0L) {
+                if ((allPieces and (BLOCK_RIGHT_PIECE shr shiftAmount)) != 0L) {
                     blockedRight = BLOCKED_RIGHT shr shiftAmount
                 }
 
-                if ((enemies and (BLOCK_BOTTOM_ENEMY shr shiftAmount)) != 0L) {
+                if ((allPieces and (BLOCK_BOTTOM_PIECE shr shiftAmount)) != 0L) {
                     blockedBottom = BLOCKED_BOTTOM shr shiftAmount
                 }
 
-                if ((enemies and (BLOCK_LEFT_ENEMY shr shiftAmount)) != 0L) {
+                if ((allPieces and (BLOCK_LEFT_PIECE shr shiftAmount)) != 0L) {
                     blockedLeft = BLOCKED_LEFT shr shiftAmount
                 }
 

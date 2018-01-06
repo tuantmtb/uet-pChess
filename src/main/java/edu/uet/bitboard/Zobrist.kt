@@ -10,6 +10,8 @@ class Zobrist() {
     private val WNArray = ArrayList<Long>()
     private val BNArray = ArrayList<Long>()
     private val whiteToMoveArray = ArrayList<Boolean>()
+//    private val wScoreArray = ArrayList<Int>()
+//    private val bScoreArray = ArrayList<Int>()
 
     private fun random64(): Long {
         val random = SecureRandom()

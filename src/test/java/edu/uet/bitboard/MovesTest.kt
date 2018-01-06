@@ -6,13 +6,13 @@ class MovesTest {
     @Test
     fun printPossibleMove() {
         val chessBoard = arrayOf(
-                arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
+                arrayOf(" ", "n", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", "n"),
-                arrayOf(" ", " ", " ", " ", " ", " ", " ", "N"),
+                arrayOf(" ", " ", " ", " ", " ", " ", "N", "N"),
                 arrayOf(" ", " ", " ", " ", " ", " ", " ", " "))
 
         val bitboardPair = BoardGeneration.arrayToBitBoards(chessBoard)
