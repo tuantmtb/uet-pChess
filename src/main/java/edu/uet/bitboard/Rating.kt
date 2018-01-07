@@ -37,7 +37,7 @@ object Rating {
         }
 
 
-        return evaluateByPositions(WN, BN) + (wScore - bScore) * 120
+        return evaluateByPositions(WN, BN) + (wScore - bScore) * 300
     }
 
     private fun evaluateByPositions(WN: Long, BN: Long): Int {
