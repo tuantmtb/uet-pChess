@@ -12,7 +12,8 @@ import kotlin.collections.HashMap
 
 class ChessAI(val color: ChessSide = ChessSide.BLACK) {
     var gameSpaceDeep = 3
-    var task : Task<Unit>? = null
+    var task: Task<Unit>? = null
+    val ai = AI(Zobrist())
 
 
     /**
@@ -38,9 +39,8 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
                 println(Arrays.toString(array[i]))
             }
 
-            val ai = AI(Zobrist())
             val startTime = System.currentTimeMillis()
-            val deepSearch = getDeepSearch(chessBoard.pieces.size, points.get(ChessSide.WHITE)!!, points.get(ChessSide.BLACK)!!)
+            val deepSearch = getDeepSearch(chessBoard.pieces.size)
             val move = ai.findNextMove(deepSearch, bitBoardPair.WN, bitBoardPair.BN, false, points.get(ChessSide.WHITE)!!, points.get(ChessSide.BLACK)!!, ChessConfig.WIN_POINT)
             val endTime = System.currentTimeMillis()
 
@@ -64,15 +64,15 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
         }
     }
 
-    fun getDeepSearch(pieceSize: Int, pointOfWhite: Int, pointOfBlack: Int): Int {
+    fun getDeepSearch(pieceSize: Int): Int {
         if (pieceSize > 10) return 5
         if (pieceSize > 8) return 6
         if (pieceSize > 6) return 7
         if (pieceSize > 5) return 8
-        if (pieceSize > 4) return 8
+        if (pieceSize > 4) return 9
         if (pieceSize > 3) return 9
-        if (pieceSize > 2) return 9
-        return 4
+        if (pieceSize > 2) return 10
+        return 11
     }
 
 
