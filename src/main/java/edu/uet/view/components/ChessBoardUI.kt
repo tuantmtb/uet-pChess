@@ -96,7 +96,7 @@ class ChessBoardUI(private val game: GameMaster) : GridPane() {
     private fun onChessPieceUIDragDetected(event: MouseEvent) {
         val pieceUI = event.target as ChessPieceUI
         val piece = pieceUI.userData
-        if (!game.hasWinner() && game.turn == piece.chessSide && !(game.pvc && game.turn == game.ai!!.color)) {
+        if (!game.hasWinner() && game.turn == piece.chessSide && !game.isAiTurn()) {
             // put image to drag board
             val db = pieceUI.startDragAndDrop(TransferMode.MOVE)
             val content = ClipboardContent()

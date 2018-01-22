@@ -172,7 +172,8 @@
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="N" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
-              <MenuItem mnemonicParsing="false" onAction="#menuClose" text="Close" />
+                <MenuItem mnemonicParsing="false" onAction="#mainMenu" text="Main menu" />
+              <MenuItem mnemonicParsing="false" onAction="#exit" text="Exit" />
             </items>
           </Menu>
         </menus>

@@ -6,7 +6,7 @@ import edu.uet.entity.ChessPiece
 import edu.uet.entity.ChessSide
 import edu.uet.utils.CountDownTimer
 
-class GameMaster {
+object GameMaster {
     val board = ChessBoard(arrayListOf(), ChessBoard.Size(ChessConfig.BOARD_WIDTH, ChessConfig.BOARD_HEIGHT))
 
     var turn : ChessSide? = null
@@ -29,7 +29,11 @@ class GameMaster {
             onTimeOut = { nextTurn() }
     )
 
-    fun newGame(pvc: Boolean = false) {
+    fun stopTimer() {
+        timer.stop()
+    }
+
+    fun newGame(pvc: Boolean = false, initialTurn: ChessSide = ChessSide.WHITE) {
         this.pvc = pvc
         ai = if (pvc) ChessAI(ChessSide.BLACK) else null
 
@@ -50,21 +54,32 @@ class GameMaster {
             GameDispatcher.fire("PIECE_ADDED", null, bPiece)
         }
 
-        turn = ChessSide.WHITE
+        turn = initialTurn
         timer.restart()
+        if (isAiTurn()) {
+            aiMoves()
+        }
+    }
+
+    private fun aiMoves() {
+        ai?.getNextMoveForChessBoard(board, points, {chessPiece, position ->
+            move(chessPiece, position)
+        })
+    }
+
+    fun isAiTurn(): Boolean {
+        return pvc && turn == ai?.color
     }
 
     private fun nextTurn() {
-        if (pvc && turn == ChessSide.BLACK) {
+        if (pvc) {
             ai?.cancelGetNextMove()
         }
 
         turn = if (turn == ChessSide.WHITE) ChessSide.BLACK else ChessSide.WHITE
         timer.restart()
-        if (pvc && turn == ChessSide.BLACK) {
-            ai?.getNextMoveForChessBoard(board, points, {chessPiece, position ->
-                move(chessPiece, position)
-            })
+        if (isAiTurn()) {
+            aiMoves()
         }
     }
 

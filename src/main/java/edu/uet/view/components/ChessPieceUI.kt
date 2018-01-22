@@ -17,6 +17,7 @@ class ChessPieceUI(piece: ChessPiece, val game: GameMaster): ImageView(if (piece
         fitHeight = Styles.GRID_SIZE
         fitWidth = Styles.GRID_SIZE
         userData = piece
+        cursor = if (game.turn == userData.chessSide && !game.isAiTurn()) Cursor.OPEN_HAND else Cursor.DEFAULT
         bind()
     }
 
@@ -27,7 +28,7 @@ class ChessPieceUI(piece: ChessPiece, val game: GameMaster): ImageView(if (piece
     private fun bind() {
         listener = GameDispatcher.on("TURN_SWITCHED", {
             Platform.runLater {
-                cursor = if (it.newValue == userData.chessSide && !(game.pvc && game.ai!!.color == userData.chessSide)) Cursor.OPEN_HAND else Cursor.DEFAULT
+                cursor = if (it.newValue == userData.chessSide && !game.isAiTurn()) Cursor.OPEN_HAND else Cursor.DEFAULT
             }
         })
     }

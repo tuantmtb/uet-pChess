@@ -7,7 +7,7 @@ import java.beans.PropertyChangeSupport
  * Dispatch events for rendering UI
  */
 object GameDispatcher {
-    private val dispatcher = PropertyChangeSupport(this)
+    private var dispatcher = PropertyChangeSupport(this)
 
     fun fire(event: String, oldValue: Any?, newValue: Any?) {
         dispatcher.firePropertyChange(event, oldValue, newValue)

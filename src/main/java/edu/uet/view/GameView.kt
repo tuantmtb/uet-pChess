@@ -14,10 +14,10 @@ import tornadofx.hide
 import tornadofx.information
 import tornadofx.show
 
-open class GameView(val pvc: Boolean) : BaseView() {
+open class GameView(val pvc: Boolean, val initialTurn: ChessSide = ChessSide.WHITE) : BaseView() {
     final override val root: BorderPane by fxml("/Game.fxml")
 
-    private var game = GameMaster()
+    private var game = GameMaster
 
     private val hbox = root.center as HBox
     private val boardUI = ChessBoardUI(game)
@@ -40,7 +40,6 @@ open class GameView(val pvc: Boolean) : BaseView() {
         hbox.children.add(0, boardUI)
 
         bind()
-        newGame()
     }
 
     private fun bind() {
@@ -80,10 +79,15 @@ open class GameView(val pvc: Boolean) : BaseView() {
     }
 
     fun newGame() {
-        game.newGame(pvc)
+        game.newGame(pvc, initialTurn)
     }
 
-    fun menuClose() {
+    fun exit() {
         Platform.exit()
+    }
+
+    fun mainMenu() {
+        game.stopTimer()
+        find(this.javaClass).replaceWith(MainMenuView::class, sizeToScene = true, centerOnScreen = true)
     }
 }
