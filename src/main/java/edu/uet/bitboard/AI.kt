@@ -7,6 +7,8 @@ class AI(val zobrist: Zobrist) {
 
     private fun bitCount(number: Long) = java.lang.Long.bitCount(number)
 
+    var cancel = false
+
     fun makeMove(move: String, whiteToMove: Boolean, WN: Long, BN: Long, wScore: Int, bScore: Int): MoveResult {
         var newWScore = wScore
         var newBScore = bScore
@@ -55,8 +57,13 @@ class AI(val zobrist: Zobrist) {
     }
 
     fun findNextMove(searchDepth: Int, WN: Long, BN: Long, whiteToMove: Boolean, wScore: Int, bScore: Int, winPoint: Int = -1): String {
+
+        cancel = false
+
         this.searchDepth = searchDepth
         val result = alphaBetaSearch(-1000, 1000, WN, BN, whiteToMove, 0, wScore, bScore, winPoint)
+
+        cancel = false
 
         println("Score: " + result.score)
 
@@ -78,7 +85,7 @@ class AI(val zobrist: Zobrist) {
             }
         }
 
-        if (depth == searchDepth) {
+        if (depth == searchDepth || cancel) {
             val evaluated = Rating.evaluate(WN, BN, wScore, bScore, winPoint)
 
             bestScore = if (whiteToMove) {

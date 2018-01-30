@@ -26,7 +26,7 @@ object GameMaster {
 
     private var timer = CountDownTimer(
             onTick = { oldValue, newValue -> GameDispatcher.fire("COUNT_DOWN_TICK", oldValue, newValue) },
-            onTimeOut = { nextTurn() }
+            onTimeOut = { ai?.cancelSearching() }
     )
 
     fun stopTimer() {
@@ -72,10 +72,6 @@ object GameMaster {
     }
 
     private fun nextTurn() {
-        if (pvc) {
-            ai?.cancelGetNextMove()
-        }
-
         turn = if (turn == ChessSide.WHITE) ChessSide.BLACK else ChessSide.WHITE
         timer.restart()
         if (isAiTurn()) {

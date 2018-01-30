@@ -7,6 +7,6 @@ object ChessConfig {
     val POINT_1 = 1
     val POINT_2 = 2
     val POINTS_FOR_EATING_AN_PIECE = 1
-    var COUNT_DOWN = 30 // seconds
+    var COUNT_DOWN = 1 // seconds
     var WIN_POINT = 10
 }

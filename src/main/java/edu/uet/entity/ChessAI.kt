@@ -51,27 +51,30 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
 
 //        var piece = chessBoardRotated.pieces.filter { it.chessSide == ChessSide.BLACK }.first()
             printMoves(move)
-            val piece = chessBoard.pieces.filter {
-                //            it.position.x == move[0].toString().toInt() && it.position.y == move[1].toString().toInt()
-                it.position.x == move[1].toString().toInt() && it.position.y == 7 - move[0].toString().toInt()
-            }.first()
+
+            if (move != "") {
+                val piece = chessBoard.pieces.filter {
+                    //            it.position.x == move[0].toString().toInt() && it.position.y == move[1].toString().toInt()
+                    it.position.x == move[1].toString().toInt() && it.position.y == 7 - move[0].toString().toInt()
+                }.first()
 
 //        val position = ChessPiece.Position(move[2].toString().toInt(), move[3].toString().toInt())
-            val position = ChessPiece.Position(move[3].toString().toInt(), 7 - move[2].toString().toInt())
-            callback(piece, position)
-            println("piece moved")
-            Unit
+                val position = ChessPiece.Position(move[3].toString().toInt(), 7 - move[2].toString().toInt())
+                callback(piece, position)
+                println("piece moved")
+                Unit
+            }
         }
     }
 
     fun getDeepSearch(pieceSize: Int): Int {
-        if (pieceSize > 10) return 5
-        if (pieceSize > 8) return 6
-        if (pieceSize > 6) return 7
-        if (pieceSize > 5) return 8
-        if (pieceSize > 4) return 9
-        if (pieceSize > 3) return 9
-        if (pieceSize > 2) return 10
+//        if (pieceSize > 10) return 5
+//        if (pieceSize > 8) return 6
+//        if (pieceSize > 6) return 7
+//        if (pieceSize > 5) return 8
+//        if (pieceSize > 4) return 9
+//        if (pieceSize > 3) return 9
+//        if (pieceSize > 2) return 10
         return 11
     }
 
@@ -79,8 +82,9 @@ class ChessAI(val color: ChessSide = ChessSide.BLACK) {
     /**
      * When timeout
      */
-    fun cancelGetNextMove() {
-        task?.cancel()
+    fun cancelSearching() {
+         ai.cancel = true
+//        task?.cancel()
     }
 
     fun printMoves(moves: String) {
