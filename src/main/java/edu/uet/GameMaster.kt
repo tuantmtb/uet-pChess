@@ -26,7 +26,13 @@ object GameMaster {
 
     private var timer = CountDownTimer(
             onTick = { oldValue, newValue -> GameDispatcher.fire("COUNT_DOWN_TICK", oldValue, newValue) },
-            onTimeOut = { ai?.cancelSearching() }
+            onTimeOut = {
+                if (isAiTurn()) {
+                    ai?.cancelSearching()
+                } else {
+                    nextTurn()
+                }
+            }
     )
 
     fun stopTimer() {
