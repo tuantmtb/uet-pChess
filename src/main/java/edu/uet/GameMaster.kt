@@ -79,6 +79,7 @@ object GameMaster {
 
     private fun nextTurn() {
         turn = if (turn == ChessSide.WHITE) ChessSide.BLACK else ChessSide.WHITE
+        println("Next turn: " + if (turn == ChessSide.WHITE) "White" else "Black")
         timer.restart()
         if (isAiTurn()) {
             aiMoves()
@@ -101,6 +102,8 @@ object GameMaster {
 
     fun move(chessPiece: ChessPiece, position: ChessPiece.Position) : Boolean {
         if (!hasWinner() && turn == chessPiece.chessSide) {
+
+
             if (isValidMove(chessPiece, position)) {
                 var oldPos = chessPiece.position
                 board.move(
@@ -114,6 +117,7 @@ object GameMaster {
                             GameDispatcher.fire("${side.name}_POINT_CHANGED", oldValue, points[side])
                         },
                         {
+                            println("=======================================================")
                             GameDispatcher.fire("PIECE_MOVED", oldPos, it.position)
                             oldPos = it.position
                         }
@@ -125,6 +129,7 @@ object GameMaster {
                 } else {
                     nextTurn()
                 }
+
                 return true
             } else {
                 return false

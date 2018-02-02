@@ -63,9 +63,9 @@ class AI(val zobrist: Zobrist) {
         this.searchDepth = searchDepth
         val result = alphaBetaSearch(-1000, 1000, WN, BN, whiteToMove, 0, wScore, bScore, winPoint)
 
-        cancel = false
+        print("Found!")
 
-        println("Score: " + result.score)
+        cancel = false
 
         return result.move
     }
